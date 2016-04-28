@@ -1,0 +1,67 @@
+#custom section
+config.status
+config.guess
+config.sub
+/.deps
+/INSTALL
+/Makefile
+src/.dirstamp
+src/config.h
+src/config.h.in
+src/config.h.in~
+src/config.log
+src/config.status
+src/.deps/
+src/stamp-h1
+goaccess
+#merged from https://raw.github.com/github/gitignore/master/Autotools.gitignore
+# http://www.gnu.org/software/automake
+
+Makefile.in
+
+# http://www.gnu.org/software/autoconf
+
+/autom4te.cache
+/aclocal.m4
+/compile
+/configure
+/depcomp
+/install-sh
+/missing
+
+# VIM
+*.*.swp
+*.log
+
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# Vagrant
+.vagrant
