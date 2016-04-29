@@ -118,6 +118,23 @@ ntohll (uint64_t x)
   return x;
 }
 
+/* Converts the given uint64_t from host byte order to TCP/IP network byte
+ * order.
+ *
+ * The given value with the byte order reversed is returned. */
+static uint64_t
+htonll (uint64_t x)
+{
+  int num = 42;
+  if (*(char *) &num == 42) {
+    uint32_t hp = htonl ((uint32_t) (x >> 32));
+    uint32_t lp = htonl ((uint32_t) (x & 0xFFFFFFFFLL));
+    return (((uint64_t) lp) << 32) | hp;
+  } else {
+    return x;
+  }
+}
+
 /* Allocate memory for a websocket client */
 static WSServer *
 new_wsserver (void)
@@ -905,8 +922,8 @@ ws_send_frame (WSClient * client, WSOpcode opcode, const char *p, int sz)
 {
   unsigned char buf[32] = { 0 };
   char *frm = NULL;
-  uint64_t payloadlen = 0;
-  int i, hsize = 2;
+  uint64_t payloadlen = 0, u64;
+  int hsize = 2;
 
   if (sz < 126) {
     payloadlen = sz;
@@ -927,13 +944,13 @@ ws_send_frame (WSClient * client, WSOpcode opcode, const char *p, int sz)
     break;
   case WS_PAYLOAD_EXT64:
     buf[1] = WS_PAYLOAD_EXT64;
-    for (i = 0; i < 8; ++i)
-      buf[i + 2] = (sz >> ((7 - i) * 8)) & 0xFF;
+    u64 = htonll (sz);
+    memcpy (buf + 2, &u64, sizeof (uint64_t));
     break;
   default:
     buf[1] = (sz & 0xff);
   }
-  frm = xcalloc (hsize + sz, sizeof (char));
+  frm = xcalloc (hsize + sz, sizeof (unsigned char));
   memcpy (frm, buf, hsize);
   if (p != NULL && sz > 0)
     memcpy (frm + hsize, p, sz);
@@ -2012,7 +2029,7 @@ ws_read_fifo (int fd, char *buf, int *buflen, int pos, int need)
 
   bytes = read (fd, buf + pos, need);
   if (bytes == -1 && (errno == EAGAIN || errno == EWOULDBLOCK))
-    return WS_READING;
+    return bytes;
   else if (bytes == -1)
     return bytes;
   *buflen += bytes;
