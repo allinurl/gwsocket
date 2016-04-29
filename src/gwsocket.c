@@ -102,6 +102,8 @@ handle_signal_action (int sig_number)
     printf ("SIGINT was catched!\n");
     ws_stop (server);
     exit (EXIT_SUCCESS);
+  } else if (sig_number == SIGPIPE) {
+    printf ("SIGPIPE was catched!\n");
   }
 }
 
@@ -112,6 +114,10 @@ setup_signals (void)
   memset (&sa, 0, sizeof (sa));
   sa.sa_handler = handle_signal_action;
   if (sigaction (SIGINT, &sa, 0) != 0) {
+    perror ("sigaction()");
+    return -1;
+  }
+  if (sigaction (SIGPIPE, &sa, 0) != 0) {
     perror ("sigaction()");
     return -1;
   }

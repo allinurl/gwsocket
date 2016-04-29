@@ -1746,6 +1746,7 @@ handle_accept (int listener, int *maxfd, WSEState * state, WSServer * server)
     return;
   }
 
+  LOG (("Accepted: %d %s.\n", newfd, client->remote_ip));
   FD_SET (newfd, &state->master);       /* add listener to master */
   if (newfd > *maxfd)
     *maxfd = newfd;
@@ -1837,13 +1838,28 @@ ws_setfifo (const char *pipename)
   return 0;
 }
 
-/* Open a named pipe (FIFO). */
+/* Open a named pipe (FIFO) for input to the server (reader). */
 static void
-ws_openfifo (int *fdpipe, const char *pipename)
+ws_openfifo_in (int *fdpipe)
 {
-  ws_setfifo (pipename);
-  if ((*fdpipe = open (pipename, O_RDWR | O_NONBLOCK)) < 0)
-    FATAL ("Unable to open fifo: %s.", strerror (errno));
+  ws_setfifo (wsconfig.pipein);
+  if ((*fdpipe = open (wsconfig.pipein, O_RDWR | O_NONBLOCK)) < 0)
+    FATAL ("Unable to open fifo in: %s.", strerror (errno));
+}
+
+/* Open a named pipe (FIFO) for output from the server (writer). */
+static int
+ws_openfifo_out (int *fdpipe)
+{
+  int status = 0;
+
+  ws_setfifo (wsconfig.pipeout);
+  status = open (wsconfig.pipeout, O_WRONLY | O_NONBLOCK);
+  if (status < -1 && errno == ENXIO)
+    LOG (("Unable to open fifo out: %s.\n", strerror (errno)));
+  *fdpipe = status;
+
+  return status;
 }
 
 /* Set a new named pipe for incoming messages and one for outgoing
@@ -1854,8 +1870,8 @@ ws_fifo (WSServer * server, WSEState * state)
   wsconfig.pipein = wsconfig.pipein ? wsconfig.pipein : WS_PIPEIN;
   wsconfig.pipeout = wsconfig.pipeout ? wsconfig.pipeout : WS_PIPEOUT;
 
-  ws_openfifo (&server->pipein->fd, wsconfig.pipein);
-  ws_openfifo (&server->pipeout->fd, wsconfig.pipeout);
+  ws_openfifo_in (&server->pipein->fd);
+  ws_openfifo_out (&server->pipeout->fd);
 
   server->pipeout->state = state;
 }
@@ -1895,7 +1911,7 @@ ws_realloc_fifobuf (WSPipeOut * pipeout, const char *buf, int len)
   if (tmp == NULL && newlen > 0) {
     close (pipeout->fd);
     clear_fifo_queue (pipeout);
-    ws_openfifo (&pipeout->fd, wsconfig.pipeout);
+    ws_openfifo_out (&pipeout->fd);
     return 1;
   }
   queue->queued = tmp;
@@ -1930,6 +1946,15 @@ ws_write_fifo_data (WSPipeOut * pipeout, char *buffer, int len)
   int bytes = 0;
 
   bytes = write (pipeout->fd, buffer, len);
+
+  /* At this point, the reader probably closed the pipe, so a cheap *hack* for
+   * this is to close the pipe on our end and attempt to reopen it. If unable to
+   * do so, then let it be -1 and try on the next attempt to write. */
+  if (bytes == -1 && errno == EPIPE) {
+    close (pipeout->fd);
+    ws_openfifo_out (&pipeout->fd);
+    return bytes;
+  }
   if (bytes < len || (bytes == -1 && (errno == EAGAIN || errno == EWOULDBLOCK)))
     ws_queue_fifobuf (pipeout, buffer, len, bytes);
 
@@ -1948,8 +1973,15 @@ ws_write_fifo_cache (WSPipeOut * pipeout)
   int bytes = 0;
 
   bytes = write (pipeout->fd, queue->queued, queue->qlen);
-  if (bytes == -1 && errno == EPIPE)
-    return 1;
+
+  /* At this point, the reader probably closed the pipe, so a cheap *hack* for
+   * this is to close the pipe on our end and attempt to reopen it. If unable to
+   * do so, then let it be -1 and try on the next attempt to write. */
+  if (bytes == -1 && errno == EPIPE) {
+    close (pipeout->fd);
+    ws_openfifo_out (&pipeout->fd);
+    return bytes;
+  }
 
   if (chop_nchars (queue->queued, bytes, queue->qlen) == 0)
     clear_fifo_queue (pipeout);
@@ -1967,6 +1999,9 @@ int
 ws_write_fifo (WSPipeOut * pipeout, char *buffer, int len)
 {
   int bytes = 0;
+
+  if (pipeout->fd == -1 && ws_openfifo_out (&pipeout->fd) == -1)
+    return bytes;
 
   /* attempt to send the whole buffer buffer */
   if (pipeout->fifoqueue == NULL)
@@ -2129,7 +2164,7 @@ handle_strict_fifo (WSServer * server)
   if (validate_fifo_packet (listener, type, size) == 1) {
     close (pi->fd);
     clear_fifo_packet (pi);
-    ws_openfifo (&pi->fd, wsconfig.pipein);
+    ws_openfifo_in (&pi->fd);
     return;
   }
 
