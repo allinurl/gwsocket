@@ -180,22 +180,22 @@ onmessage (WSPipeOut * pipeout, WSClient * client)
 }
 
 static void
-parse_long_opt (const char *name, const char *optarg)
+parse_long_opt (const char *name, const char *oarg)
 {
   if (!strcmp ("echo-mode", name))
     ws_set_config_echomode (1);
   if (!strcmp ("max-frame-size", name))
-    ws_set_config_frame_size (atoi (optarg));
+    ws_set_config_frame_size (atoi (oarg));
   if (!strcmp ("origin", name))
-    ws_set_config_origin (optarg);
+    ws_set_config_origin (oarg);
   if (!strcmp ("pipein", name))
-    ws_set_config_pipein (optarg);
+    ws_set_config_pipein (oarg);
   if (!strcmp ("pipeout", name))
-    ws_set_config_pipeout (optarg);
+    ws_set_config_pipeout (oarg);
   if (!strcmp ("strict", name))
     ws_set_config_strict (1);
   if (!strcmp ("access-log", name))
-    ws_set_config_accesslog (optarg);
+    ws_set_config_accesslog (oarg);
 }
 
 /* Read the user's supplied command line options. */
