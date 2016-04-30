@@ -92,7 +92,7 @@ verify_utf8 (uint32_t * state, const char *str, int len)
   int i;
   uint32_t type;
 
-  for (i = 0; i < len; i++) {
+  for (i = 0; i < len; ++i) {
     type = utf8d[(uint8_t) str[i]];
     *state = utf8d[256 + (*state) * 16 + type];
 
