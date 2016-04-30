@@ -2076,6 +2076,18 @@ ws_broadcast_fifo (void *value, void *user_data)
   return 0;
 }
 
+/* Send a message from the incoming named pipe to specific client
+ * given the socket id. */
+static void
+ws_send_strict_fifo_to_client (WSServer * server, int listener, WSPacket * pa)
+{
+  WSClient *client = NULL;
+
+  if (!(client = ws_get_client_from_list (listener, &server->colist)))
+    return;
+  ws_send_data (client, pa->type, pa->data, pa->len);
+}
+
 /* Attempt to read message from a named pipe (FIFO).
  *
  * On error, -1 is returned.
@@ -2143,18 +2155,6 @@ validate_fifo_packet (uint32_t listener, uint32_t type, int size)
   }
 
   return 0;
-}
-
-/* Send a message from the incoming named pipe to specific client
- * given the socket id. */
-static void
-ws_send_strict_fifo_to_client (WSServer * server, int listener, WSPacket * pa)
-{
-  WSClient *client = NULL;
-
-  if (!(client = ws_get_client_from_list (listener, &server->colist)))
-    return;
-  ws_send_data (client, pa->type, pa->data, pa->len);
 }
 
 /* Handle reading and sending the incoming data from the named pipe on
