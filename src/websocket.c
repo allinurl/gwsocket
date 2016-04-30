@@ -2300,6 +2300,8 @@ ws_socket (int *listener)
     FATAL ("Unable to listen: %s.", strerror (errno));
 }
 
+/* Handle incoming messages through a pipe (let gwsocket be the
+ * reader) and outgoing messages through the pipe (writer). */
 static void
 ws_fifos (WSServer * server, WSPipeIn * pi, WSPipeOut * po, WSEState * state)
 {
