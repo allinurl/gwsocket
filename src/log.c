@@ -40,16 +40,6 @@
 
 static FILE *log_file;
 
-/* Debug otuput */
-void
-dbg_printf (const char *fmt, ...)
-{
-  va_list args;
-  va_start (args, fmt);
-  vfprintf (stderr, fmt, args);
-  va_end (args);
-}
-
 /* Open a access file whose name is specified in the given path. */
 int
 access_log_open (const char *path)
@@ -76,6 +66,16 @@ access_log_close (void)
 }
 
 #pragma GCC diagnostic ignored "-Wformat-nonliteral"
+/* Debug otuput */
+void
+dbg_printf (const char *fmt, ...)
+{
+  va_list args;
+  va_start (args, fmt);
+  vfprintf (stderr, fmt, args);
+  va_end (args);
+}
+
 /* Write formatted access log data to the logfile. */
 void
 access_fprintf (const char *fmt, ...)

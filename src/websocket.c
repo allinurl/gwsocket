@@ -103,38 +103,6 @@ verify_utf8 (uint32_t * state, const char *str, int len)
   return *state;
 }
 
-/* Converts an the given uint64_t from TCP/IP network order to host
- * byte order.
- *
- * The given value with the byte order reversed is returned. */
-static uint64_t
-ntohll (uint64_t x)
-{
-  const unsigned t = 1;
-  if (*(const unsigned char *) &t) {
-    x = ((uint64_t) ntohl (x & 0xffffffffU) << 32)
-      | ntohl ((uint32_t) (x >> 32));
-  }
-  return x;
-}
-
-/* Converts the given uint64_t from host byte order to TCP/IP network byte
- * order.
- *
- * The given value with the byte order reversed is returned. */
-static uint64_t
-htonll (uint64_t x)
-{
-  int num = 42;
-  if (*(char *) &num == 42) {
-    uint32_t hp = htonl ((uint32_t) (x >> 32));
-    uint32_t lp = htonl ((uint32_t) (x & 0xFFFFFFFFLL));
-    return (((uint64_t) lp) << 32) | hp;
-  } else {
-    return x;
-  }
-}
-
 /* Allocate memory for a websocket client */
 static WSServer *
 new_wsserver (void)
@@ -950,7 +918,7 @@ ws_send_frame (WSClient * client, WSOpcode opcode, const char *p, int sz)
     break;
   case WS_PAYLOAD_EXT64:
     buf[1] = WS_PAYLOAD_EXT64;
-    u64 = htonll (sz);
+    u64 = htobe64 (sz);
     memcpy (buf + 2, &u64, sizeof (uint64_t));
     break;
   default:
@@ -1492,7 +1460,7 @@ ws_set_payloadlen (WSFrame * frm, const char *buf)
     break;
   case WS_PAYLOAD_EXT64:
     memcpy (&len64, (buf + 2), sizeof (uint64_t));
-    frm->payloadlen = ntohll (len64);
+    frm->payloadlen = be64toh (len64);
     break;
   default:
     frm->payloadlen = payloadlen;

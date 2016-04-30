@@ -33,6 +33,29 @@
 
 #include <netinet/in.h>
 #include <limits.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+#if defined(__linux__) || defined(__CYGWIN__)
+#  include <endian.h>
+#elif defined(__FreeBSD__) || defined(__NetBSD__)
+#  include <sys/endian.h>
+#elif defined(__OpenBSD__)
+#  include <sys/types.h>
+#  define be16toh(x) betoh16(x)
+#  define be32toh(x) betoh32(x)
+#  define be64toh(x) betoh64(x)
+#elif defined(__APPLE__)
+#  include <libkern/OSByteOrder.h>
+#  define htobe16(x) OSSwapHostToBigInt16(x)
+#  define htobe64(x) OSSwapHostToBigInt64(x)
+#  define be16toh(x) OSSwapBigToHostInt16(x)
+#  define be32toh(x) OSSwapBigToHostInt32(x)
+#  define be64toh(x) OSSwapBigToHostInt64(x)
+#else
+#  error Platform not supported!
+#endif
 
 #include "gslist.h"
 
