@@ -91,6 +91,7 @@ cmd_help (void)
   "GoAccess Copyright (C) 2016 by Gerardo Orellana"
   "\n\n"
   );
+  ws_stop (server);
   exit (EXIT_FAILURE);
 }
 /* *INDENT-ON* */
@@ -211,11 +212,12 @@ read_option_args (int argc, char **argv)
     case 'p':
       ws_set_config_port (optarg);
       break;
+    case 'h':
+      cmd_help ();
+      return 1;
     case 'V':
       fprintf (stdout, "GWSocket %s\n", GW_VERSION);
       return 1;
-      /* ignore it */
-      break;
     case 0:
       parse_long_opt (long_opts[idx].name, optarg);
       break;
