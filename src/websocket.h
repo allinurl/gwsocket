@@ -192,6 +192,7 @@ typedef struct WSPipeIn_
   int fd;                       /* named pipe FD */
 
   WSPacket *packet;             /* FIFO data's buffer */
+  WSEState *state;              /* FDs states */
 
   char hdr[HDR_SIZE];           /* FIFO header's buffer */
   int hlen;
