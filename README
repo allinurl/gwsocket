@@ -1,0 +1,36 @@
+What is it?
+-----------
+gwsocket is a standalone, simple, yet powerful rfc6455 compliant WebSocket
+Server, written in C.
+
+Why?
+----
+I needed a simple, fast, no-dependencies, RFC6455 compliant WebSocket Server
+written in C that I could use as a library for the upcoming version (v1.0) of
+GoAccess by simply piping data in and out.
+
+Features
+-------
+* Message Fragmentation per section 5.4
+* UTF-8 Handling
+* Framing (Text & Binary messages)
+* Multiplexed non-blocking network I/O
+* Ability to pipe data in/out in two different modes (stdin/stdout & strict mode)
+* It passes the Autobahn Testsuite :)
+* and of course, Valgrind tested.
+* missing something?, please feel free to post it on Github.
+
+How it Works?
+-------------
+Very simple, just pipe your data out of your application and let gwsocket do
+the rest. e.g.: tail -f /var/log/nginx/access.log > /tmp/wspipein.fifo
+
+By the way, you can also pipe the client's data into your application.
+
+Note: You can even send your favorite NCurses program's output. See
+https://github.com/allinurl/gwsocket.
+
+More Examples?
+-------------
+Looking for more examples and details on how it works? Head to the man page for
+more details. Or visit http://gwsocket.io
