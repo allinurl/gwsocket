@@ -443,8 +443,10 @@ ws_clear_pipein (WSPipeIn * pipein)
   if (!pipein)
     return;
 
+  if (pipein->fd != -1)
+    close (pipein->fd);
+
   ws_clear_fifo_packet (*packet);
-  close (pipein->fd);
   free (pipein);
 
   if (wsconfig.pipein && access (wsconfig.pipein, F_OK) != -1)
@@ -458,7 +460,9 @@ ws_clear_pipeout (WSPipeOut * pipeout)
   if (!pipeout)
     return;
 
-  close (pipeout->fd);
+  if (pipeout->fd != -1)
+    close (pipeout->fd);
+
   free (pipeout);
 
   if (wsconfig.pipeout && access (wsconfig.pipeout, F_OK) != -1)
