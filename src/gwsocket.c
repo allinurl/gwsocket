@@ -88,7 +88,7 @@ cmd_help (void)
   "\n"
   "See the man page for more information `man gwsocket`.\n\n"
   "For more details visit: http://gwsocket.io\n"
-  "GoAccess Copyright (C) 2016 by Gerardo Orellana"
+  "gwsocket Copyright (C) 2016 by Gerardo Orellana"
   "\n\n"
   );
   ws_stop (server);
