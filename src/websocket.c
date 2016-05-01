@@ -782,7 +782,7 @@ ws_respond_data (WSClient * client, const char *buffer, int len)
 {
   int bytes = 0;
 
-  bytes = send (client->listener, buffer, len, MSG_NOSIGNAL);
+  bytes = send (client->listener, buffer, len, 0);
   if (bytes == -1 && errno == EPIPE)
     return ws_set_status (client, WS_ERR | WS_CLOSE, bytes);
 
