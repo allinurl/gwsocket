@@ -1,0 +1,383 @@
+.TH gwsocket 1 "MAY 2016" Linux "User Manuals"
+.SH NAME
+gwsocket is a standalone, simple, yet powerful rfc6455 compliant WebSocket Server.
+.SH SYNOPSIS
+.LP
+.B gwsocket -p [--bind][--origin][gwsocket options ...]
+.SH DESCRIPTION
+.B gwsocket
+is a free (MIT Licensed), standalone, WebSocket Server. It sits
+between your application and the client's browser, giving the ability for
+bidirectional communication between these two with ease and flexibility.
+.SH Start the Server
+.P
+You can run gwsocket without passing any options to the command line. By
+default, it will listen on port 7890 on all the interfaces, e.g., 127.0.0.1,
+::1, etc. For instance:
+.LP
+.B # gwsocket --access-log=/tmp/access.log
+.I Note:
+See a basic client-side example at the bottom of the man page.
+.SH OPTIONS
+.TP
+\fB\-p \-\-port
+Specifies the port to bind.
+.TP
+\fB\-h \-\-help
+Command line help.
+.TP
+\fB\-V \-\-version
+Display version information and exit.
+.TP
+\fB\-\-access-log=<path/file>
+Specifies the path/file for the access log.
+.TP
+\fB\-\-bind=<addr>
+Specifies the address to bind.
+.TP
+\fB\-\-echo-mode
+Set the server to echo all received messages.
+.TP
+\fB\-\-max-frame-size=<bytes>
+Maximum size of a websocket frame. This includes received frames from the
+client and messages through the named pipe.
+.TP
+\fB\-\-origin=<origin>
+Ensure clients send the specified origin header upon the WebSocket handshake.
+.TP
+\fB\-\-pipein=<path/file>
+Creates a named pipe (FIFO) that reads from on the given path/file.
+.TP
+\fB\-\-pipeout=<path/file>
+Creates a named pipe (FIFO) that writes to the given path/file.
+.TP
+\fB\-\-strict
+Parse messages using strict mode. See below for more details.
+.SH CONFIGURATION
+.TP
+\fB\-\-enable-debug
+Compile with debugging symbols and turn off compiler optimizations.
+.SH DATA MODES
+.P
+In order to establish a channel between your application and the client's
+browser, gwsocket provides two methods that allow the user to send data in and
+out. The first one is through the use of the standard input
+.I (stdin)
+,and the standard output
+.I (stdout)
+.The second method is through a fixed-size header
+followed by the payload. See options below for more details.
+.SS
+.I
+1. stdin/stdout
+.P
+The standard input/output is the simplest way of sending/receiving data to/from
+a client. However, it's limited to broadcasting messages to all clients. To
+send messages to or receive from a specific client, use the strict mode in
+section 2.
+.SS
+.I
+1.1 Sending Data to all Clients — stdout
+.P
+If you need to broadcast data from your application to all clients connected to
+gwsocket, then, the simplest way of doing it is by piping your application
+output into a named pipe (also known as FIFO) that gwsocket makes use of. Once
+gwsocket receives the payload, then it will automatically broadcast the message
+to all connected clients.
+.SS
+.BR
+1.1. Examples
+
+  #include <fcntl.h>
+  #include <sys/stat.h>
+  #include <sys/types.h>
+  #include <unistd.h>
+
+  int main() {
+      int fd;
+      char *myfifo = "/tmp/wspipein.fifo";
+      const char *msg = "Message to broadcast";
+
+      fd = open(myfifo, O_WRONLY);
+      write(fd, msg, strlen(msg));
+      close(fd);
+
+      return 0;
+  }
+
+.P
+.I Note:
+You can send as many bytes
+.I PIPE_BUF
+can hold. If a message is greater than PIPE_BUF, it would send the rest on a
+second message or third, and so on. See strict mode below for more control over
+messages.
+.SS
+.I
+1.2 Receiving Data from Clients — stdin
+.P
+When a client sends a message to the server, it is possible to capture that
+message in your application. To do this, your application simply needs to read
+from a named pipe. By default, gwsocket creates a FIFO under
+.I /tmp/wspipeout.fifo.
+.SS
+.BR
+1.2. Examples
+.P
+Receiving data can be as simple as doing a
+.I # cat /tmp/wspipeout.fifo
+or you can do it in the language of your choice. See examples below.
+
+  #include <stdio.h>
+  #include <stdlib.h>
+  #include <fcntl.h>
+  #include <limits.h>
+
+  static void read_message (int fd, fd_set set) {
+    int bytes = 0;
+    char buf[PIPE_BUF] = { 0 };
+
+    FD_ZERO (&set);
+    FD_SET (fd, &set);
+
+    if ((select (fd + 1, &set, NULL, NULL, NULL)) < 1)
+      exit (1);
+    if (!FD_ISSET (fd, &set))
+      return;
+
+    if (read (fd, buf, PIPE_BUF) > 0)
+      printf ("%s\n", buf);
+  }
+
+  int main (void) {
+    fd_set set;
+    char *fifo = "/tmp/wspipeout.fifo";
+    int fd = 0;
+
+    if ((fd = open (fifo, O_RDWR | O_NONBLOCK)) < 0)
+      exit (1);
+    while (1)
+      read_message(fd, set);
+
+    return 0;
+  }
+
+.I
+Note:
+Make sure the reader in your application is set as non-blocking to get a
+constant feed.
+.P
+.I Tip
+If you need to know which client sent the message, for example, in a chat
+application, please see the strict mode below.
+
+.SS
+.I
+2. Strict Mode
+.P
+gwsocket implements its own tiny protocol for sending/receiving data. In
+contrast to the stdin/stdout mode, the strict mode allows you to send/receive
+data to/from specific connected clients as well as to keep track of who
+opened/closed a WebSocket connection. It also gives you the ability to pack and
+send as much data as you would like on a single message.
+.P
+2. Data Format
+.P
+The message header is a fixed-size header. The first 12 bytes (uint32_t) are
+packed in network byte order and contain the "meta-data" of the message we are
+sending/receiving. The rest of it is the actual message.
+.P
+  0            1               2                3
+  +---------------------------------------------+
+  |        Client Socket Id (listener)          |
+  +---------------------------------------------+
+  |    Message Type (binary: 0x2 / text: 0x1)   |
+  +---------------------------------------------+
+  |             Payload length                  |
+  +---------------------------------------------+
+  |              Payload Data                   |
+  +---------------------------------------------+
+.SS
+.I
+2.1 Sending Data — Strict Mode
+.P
+If you need to send a message to a specific client, then you can do so by
+specifying the client id in the message header. If set to 0, the message will
+be broadcasted to all clients. The first 4 bytes are reserved for the client id
+or listener. The following 4 bytes are reserved for the message type. 0x01 for
+a text message, and 0x02 for a binary message. And the last 4 bytes are
+reserved for the payload's length.
+.P
+Once the header has been written to the pipe, you may now write the message.
+.SS
+.BR
+2.1. Examples
+.P
+First, start the server in strict-mode.
+.LP
+.B # gwsocket --strict-mode
+  #include <stdio.h>
+  #include <stdlib.h>
+  #include <string.h>
+  #include <fcntl.h>
+
+  size_t pack_uint32(void* buf, uint32_t val) {
+    uint32_t v32 = htonl(val);
+    memcpy(buf, &v32, sizeof(uint32_t));
+    return sizeof(uint32_t);
+  }
+
+  int main() {
+    char *p = calloc (sizeof(uint32_t) * 3, sizeof(char)), *ptr;
+    const char *msg = "Message to broadcast";
+    const char *fifo = "/tmp/wspipein.fifo";
+    int fd;
+
+    ptr = p;
+    ptr += pack_uint32(ptr, 0);
+    ptr += pack_uint32(ptr, 0x01);
+    ptr += pack_uint32(ptr, strlen(msg));
+
+    fd = open(fifo, O_WRONLY);
+    write(fd, p, sizeof(uint32_t) * 3);
+    write(fd, msg, strlen(msg));
+    close(fd);
+    free (p);
+
+    return 0;
+  }
+.SS
+.I
+2.2 Receiving Data from Clients — Strict Mode
+.P
+Now, to get a message from a specific client and route it to another client,
+you just need to do the opposite of sending data. First you unpack the header
+from network byte order to host byte order and then read the payload.
+.SS
+.BR
+2.2. Examples
+.P
+First, start the server in strict-mode.
+.LP
+.B # gwsocket --strict-mode
+  #include <stdio.h>
+  #include <stdlib.h>
+  #include <fcntl.h>
+  #include <limits.h>
+  #include <int.h>
+
+  static size_t unpack_uint32 (const void *b, uint32_t * val) {
+    uint32_t v32 = 0;
+    memcpy (&v32, b, sizeof (uint32_t));
+    *val = ntohl (v32);
+    return sizeof (uint32_t);
+  }
+
+  static void read_message (int fd, fd_set set) {
+    int bytes = 0;
+    uint32_t size = 0, listener = 0, type = 0;
+    char hdr[PIPE_BUF] = { 0 }, buf[PIPE_BUF] = {0};
+    char *ptr = NULL;
+
+    FD_ZERO (&set);
+    FD_SET (fd, &set);
+
+    if ((select (fd + 1, &set, NULL, NULL, NULL)) < 1)
+      exit (1);
+    if (!FD_ISSET (fd, &set))
+      return;
+
+    if (hdr[0] == '\0') {
+      if (read (fd, hdr, sizeof (uint32_t) * 3) < 1)
+        return;
+    }
+
+    ptr = hdr;
+    ptr += unpack_uint32(ptr, &listener);
+    ptr += unpack_uint32(ptr, &type);
+    ptr += unpack_uint32(ptr, &size);
+
+    if (read (fd, buf, size) < 1)
+      return;
+
+    printf ("client: %d, msg: %s\n", listener, buf);
+  }
+
+  int main (void) {
+    fd_set set;
+    char *fifo = "/tmp/wspipeout.fifo";
+    int fd = 0;
+
+    if ((fd = open (fifo, O_RDWR | O_NONBLOCK)) < 0)
+      exit (1);
+    while (1)
+      read_message(fd, set);
+
+    return 0;
+  }
+.P
+.I Note:
+If you read/write to a stream, be aware that they do not necessarily read/write
+the full amount of data you have requested. Your application will need to
+handle the case where only a single byte is read or written. Examples above do
+not handle this.
+.SH OBLIGATORY CLIENT EXAMPLE
+.P
+Here's the basic example, client and server side. First start the server and
+set it in echo mode.
+.LP
+.B # gwsocket --echo-mode
+.P
+Now, let's create the client side.
+
+  <!DOCTYPE html>
+  <html lang="en">
+  <style>
+  pre {
+      background: #EEE;
+      border: 1px solid #CCC;
+      padding: 10px;
+  }
+  #page-wrapper {
+      border-top: 5px solid #69c773;
+      margin: 1em auto;
+      width: 950px;
+  }
+  </style>
+  <script>
+  window.onload = function() {
+      function $(selector) {
+          return document.querySelector(selector);
+      }
+      var socket = new WebSocket('ws://localhost:7890');
+      socket.onopen = function(event) {
+          $('#messages').innerHTML = 'Connected<br>';
+      };
+      socket.onmessage = function(event) {
+          $('#messages').innerHTML += 'Received:<br>' + event.data + '<br>';
+      };
+      socket.onclose = function(event) {
+          $('#messages').innerHTML = 'Disconnected ' + event.reason;
+      };
+      $('#submit').onclick = function(e) {
+          socket.send($('input').value);
+          $('#messages').innerHTML += 'Sent:<br>' + $('input').value + '<br>';
+          $('input').value = '';
+      };
+  };
+  </script>
+
+  <div id="page-wrapper">
+      <pre id="messages">Connecting...</pre>
+      <input id="message" required>
+      <button id="submit">Send Message</button>
+  </div>
+
+.SH BUGS
+.P
+If you think you have found a bug, please send me an email to hello [@at]
+goaccess.io.
+.SH AUTHOR
+.P
+Gerardo Orellana. For more details about it, or new releases, please visit
+http://gwsocket.io
