@@ -1,96 +1,109 @@
-GWSocket
+gwsocket
 ========
 
 ## What is it? ##
-GWSocket is a standalone, simple, yet powerful rfc6455 complaint WebSocket
-Server, written in C.
-
-## Why? ##
-I needed a simple, fast, no-dependencies, rfc6455 complaint WebSocket Server
-written in C that I could use as a library for the upcoming version (v1.0) of
-[**GoAccess**](https://github.com/allinurl/goaccess) by simply piping data in
-and out.
+**gwsocket** is a standalone, simple, yet powerful
+[rfc6455](https://tools.ietf.org/html/rfc6455) compliant WebSocket Server,
+written in C. More info at: [http://gwsocket.io](http://gwsocket.io/?src=gh).
 
 ## Features ##
-
-* Message Fragmentation (rfc [5.4](https://tools.ietf.org/html/rfc6455#page-33))
+* Message Fragmentation per section [5.4](https://tools.ietf.org/html/rfc6455#page-33)
 * UTF-8 Handling
 * Framing (Text & Binary messages)
-* Non-blocking network I/O
-* Ability to pipe data in and out in two different modes (stdin/stdout & strict mode)
-* It passes the Autobahn Testsuite :)
+* Multiplexed non-blocking network I/O
+* Ability to pipe data in/out in two different modes (stdin/stdout & strict mode)
+* It passes the [Autobahn Testsuite](http://gwsocket.io/autobahn/) :)
 * and of course, [Valgrind](http://valgrind.org/) tested.
+* missing something?, please feel free to post it on Github.
+
+## Why gwsocket? ##
+I needed a simple, fast, no-dependencies, RFC6455 compliant WebSocket Server
+written in C that I could use as a library for the upcoming version (v1.0) of
+[**GoAccess**](https://goaccess.io/) by simply piping data in and out.
+
+## How it Works? ##
+Very simple, just pipe your data **out** of your application and let gwsocket
+do the rest. e.g.:
+
+``tail -f /var/log/nginx/access.log > /tmp/wspipein.fifo``
+
+**BTW**, you can also pipe the client's data **into** your application.
+
+Note: You can even send your favorite NCurses program's output. See screencast above.
+
+## More Examples? ##
+Looking for more examples and details on how it works? Head to the [man page](http://gwsocket.io/?src=gh)
+for more details.
+
+## Installation ##
+Installing gwsocket is pretty easy. Just download, extract and compile it with:
+
+```
+$ wget http://tar.gwsocket.io/gwsocket-0.1.tar.gz
+$ tar -xzvf gwsocket-0.1.tar.gz
+$ cd gwsocket-0.1/
+$ ./configure
+$ make
+# make install
+```
+No dependencies needed. How nice isn't it :), well almost, you need `gcc`, `make`, etc.
+
+## Build from GitHub ##
+```
+$ git clone https://github.com/allinurl/gwsocket.git
+$ cd gwsocket
+$ autoreconf -fiv
+$ ./configure
+$ make
+# make install
+```
 
 ## Data Modes ##
+In order to establish a channel between your application and the client's
+browser, gwsocket provides two methods that allow the user to send data in and
+out. The first one is through the use of the standard input (stdin), and the
+standard output (stdout). The second method is through a fixed-size header
+followed by the payload. See options below for more details.
 
-There are two ways to communicate to the server, the first and default is by
-piping data from your application stdout into a GWSocket named pipe. The second
-mode is using a strict mode pipe. See Usage below for details.
+### STDIN/STDOUT ###
+The standard input/output is the simplest way of sending/receiving data to/from
+a client. However, it's limited to broadcasting messages to all clients. To
+send messages to or receive from a specific client, use the strict mode in the
+next section. See language specific examples [here](http://gwsocket.io/).
 
-## Usage ##
+### Strict Mode ###
+gwsocket implements its own tiny protocol for sending/receiving data. In
+contrast to the **stdin/stdout** mode, the strict mode allows you to
+send/receive data to/from specific connected clients as well as to keep track
+of who opened/closed a WebSocket connection. It also gives you the ability to
+pack and send as much data as you would like on a single message. See language
+specific examples [here](http://gwsocket.io/).
 
-By default, running GWSocket without any command line options, will run in
-standard mode, and listening on port `7890` and all IPv4 addresses `0.0.0.0`.
-For instance,
+## Command Line / Config Options ##
+The following options can be supplied to the command line.
 
-    # gwsocket
 
-See command line options below for more options.
+| Command Line Option          | Description                                                         |
+| ---------------------------- | --------------------------------------------------------------------|
+| `-p --port`                  | Specifies the port to bind.                                         |
+| `-h --help`                  | Command line help.                                                  |
+| `-V --version`               | Display version information and exit.                               |
+| `--access-log=<path/file>`   | Specifies the path/file for the access log.                         |
+| `--bind=<addr>`              | Specifies the address to bind.                                      |
+| `--echo-mode`                | Set the server to echo all received messages.                       |
+| `--max-frame-size=<bytes>`   | Maximum size of a websocket frame.                                  |
+| `--origin=<origin>`          | Ensure clients send the specified origin header upon handshake.     |
+| `--pipein=<path/file>`       | Creates a named pipe (FIFO) that reads from on the given path/file. |
+| `--pipeout=<path/file>`      | Creates a named pipe (FIFO) that writes to the given path/file.     |
+| `--strict`                   | Parse messages using strict mode. See man page for more details.    |
 
-### How to Send Data? ###
+## License ##
+MIT Licensed
 
-#### Standard Mode ####
+## Contributing ##
 
-It's fairly easy to send data using the standard mode to all the connected
-clients:
+Any help on gwsocket is welcome. The most helpful way is to try it out and give
+feedback. Feel free to use the Github issue tracker and pull requests to
+discuss and submit code changes.
 
-    # tail -f /var/log/nginx/access.log > /tmp/wspipein.fifo
-
-OR
-
-    # top -b > /tmp/wspipein.fifo
-
-OR
-
-    # while true; do echo $RANDOM > /tmp/wspipein.fifo; sleep 1; done
-
-You can send as many bytes `PIPE_BUF` can hold. If a message is greater than
-`PIPE_BUF`, it would send the rest on a second message or third, and so on. See
-**strict mode** for more control over messages.
-
-#### Strict Mode ####
-
-The strict mode in GWSocket allows you to send data to specific connected
-clients as well as to keep track of who opened/closed a WebSocket connection.
-It also gives you the ability to pack and send as much data as you would like
-to a client or broadcast the message to all of them.
-
-##### Data Format #####
-
-GWSocket implements its own "mini-procotol", that way it knows how much data is
-coming through the pipe, to which client is going and the type of message we
-are sending (binary/text). Here's how the format is structured.
-
-```
-0                   1                   2                   3
-+---------------------------------------------------------------+
-|                  Client Socket Id (listener)                  |
-+---------------------------------------------------------------+
-|              Message Type (binary: 0x2 / text: 0x1)           |
-+---------------------------------------------------------------+
-|                       Payload length                          |
-+---------------------------------------------------------------+
-|                        Payload Data                           |
-+---------------------------------------------------------------+
-```
-
-The first `12 bytes` (uint32_t) are packed in network byte order and contain
-the "meta-data" of the message we are sending. The rest of it is the atual
-message.
-
-## Roadmap ##
-
-* Add SSL support.
-* Replace `select(2)` for `epoll(2)` and `kqueue(2)`.
-* Message logging
-* Command line options.
+Enjoy!
