@@ -1,0 +1,21 @@
+language: c
+compiler:
+        - clang
+        - gcc
+before_install:
+        - sudo apt-get update -qq
+        - sudo apt-get install -qq autoconf autotools-dev
+install:
+        - autoreconf -fiv
+        - ./configure
+        - make
+        - make distclean
+        - autoreconf -fiv
+        - ./configure --enable-debug
+        - make
+        - make distclean
+        - autoreconf -fiv
+branches:
+ only:
+   - master 
+script: "echo done"
