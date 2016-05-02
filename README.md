@@ -6,7 +6,7 @@ gwsocket [![Build Status](https://travis-ci.org/allinurl/gwsocket.svg?branch=mas
 [rfc6455](https://tools.ietf.org/html/rfc6455) compliant WebSocket Server,
 written in C. More info at: [http://gwsocket.io](http://gwsocket.io/?src=gh).
 
-<img src="http://gwsocket.io/images/optimised.gif?1462163672" width="550" />
+![gwsocket terminal](http://gwsocket.io/images/gwsocket-terminal-620.gif?20160502)
 
 ## Features ##
 * Message Fragmentation per section [5.4](https://tools.ietf.org/html/rfc6455#page-33)
