@@ -1,4 +1,4 @@
-gwsocket
+gwsocket [![Build Status](https://travis-ci.org/allinurl/gwsocket.svg?branch=master)](http://travis-ci.org/allinurl/gwsocket)
 ========
 
 ## What is it? ##
