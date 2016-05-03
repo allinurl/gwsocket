@@ -2,9 +2,10 @@ gwsocket [![Build Status](https://travis-ci.org/allinurl/gwsocket.svg?branch=mas
 ========
 
 ## What is it? ##
-**gwsocket** is a standalone, simple, yet powerful
-[rfc6455](https://tools.ietf.org/html/rfc6455) compliant WebSocket Server,
-written in C. More info at: [http://gwsocket.io](http://gwsocket.io/?src=gh).
+**gwsocket** is a free, standalone, WebSocket Server. It sits between your
+application and the client's browser, giving the ability for bidirectional
+communication between these two with ease and flexibility. More info at:
+[http://gwsocket.io](http://gwsocket.io/?src=gh).
 
 ![gwsocket terminal](http://gwsocket.io/images/gwsocket-terminal-620.gif?2016050202)
 
