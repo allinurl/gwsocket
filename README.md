@@ -2,9 +2,10 @@ gwsocket [![Build Status](https://travis-ci.org/allinurl/gwsocket.svg?branch=mas
 ========
 
 ## What is it? ##
-**gwsocket** is a free, standalone, WebSocket Server. It sits between your
-application and the client's browser, giving the ability for bidirectional
-communication between these two with ease and flexibility. More info at:
+**gwsocket** is a free, standalone, no dependencies, WebSocket Server. It sits
+between your application and the client's browser, giving the ability for
+bidirectional communication between these two with ease and flexibility. More
+info at:
 [http://gwsocket.io](http://gwsocket.io/?src=gh).
 
 ![gwsocket terminal](http://gwsocket.io/images/gwsocket-terminal-620.gif?2016050202)
@@ -19,23 +20,23 @@ communication between these two with ease and flexibility. More info at:
 * and of course, [Valgrind](http://valgrind.org/) tested.
 * missing something?, please feel free to post it on Github.
 
-## Why gwsocket? ##
-I needed a simple, fast, no-dependencies, RFC6455 compliant WebSocket Server
-written in C that I could use as a library for the upcoming version (v1.0) of
-[**GoAccess**](https://goaccess.io/) by simply piping data in and out —
-WebSockets made easy!
-
 ## How it Works? ##
-Very simple, just redirect/send the output **(stdout)** from your application to a
-file and let gwsocket do the rest. e.g., tailing your server's logs into the
-browser:
+Very simple, just redirect/send the output **(stdout)** from your application
+to a file and let gwsocket do the rest. For example, tailing your server's logs
+into the browser couldn't be easier:
 
     tail -f /var/log/nginx/access.log > /tmp/wspipein.fifo
 
 BTW, you can also get the client's data into **(stdin)** your application.
 
-Tip: You can even send your favorite NCurses program's output. See screencast
-above.
+In fact, you can even send your favorite **NCurses** program's output. See
+screencast above.
+
+## Why gwsocket? ##
+I needed a simple, fast, no-dependencies, RFC6455 compliant WebSocket Server
+written in C that I could use as a library for the upcoming version (v1.0) of
+[**GoAccess**](https://goaccess.io/) by simply piping data in and out —
+WebSockets made easy!
 
 ## More Examples? ##
 Looking for more examples and details on how it works? Head to the [man page](http://gwsocket.io/?src=gh)
