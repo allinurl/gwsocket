@@ -21,7 +21,8 @@ written in C. More info at: [http://gwsocket.io](http://gwsocket.io/?src=gh).
 ## Why gwsocket? ##
 I needed a simple, fast, no-dependencies, RFC6455 compliant WebSocket Server
 written in C that I could use as a library for the upcoming version (v1.0) of
-[**GoAccess**](https://goaccess.io/) by simply piping data in and out.
+[**GoAccess**](https://goaccess.io/) by simply piping data in and out —
+WebSockets made easy!
 
 ## How it Works? ##
 Very simple, just redirect/send the output **(stdout)** from your application to a
