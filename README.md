@@ -24,14 +24,16 @@ written in C that I could use as a library for the upcoming version (v1.0) of
 [**GoAccess**](https://goaccess.io/) by simply piping data in and out.
 
 ## How it Works? ##
-Very simple, just pipe your data **out** of your application and let gwsocket
-do the rest. e.g.:
+Very simple, just redirect/send the output **(stdout)** from your application to a
+file and let gwsocket do the rest. e.g., tailing your server's logs into the
+browser:
 
-``tail -f /var/log/nginx/access.log > /tmp/wspipein.fifo``
+    tail -f /var/log/nginx/access.log > /tmp/wspipein.fifo
 
-**BTW**, you can also pipe the client's data **into** your application.
+BTW, you can also get the client's data into **(stdin)** your application.
 
-Note: You can even send your favorite NCurses program's output. See screencast above.
+Tip: You can even send your favorite NCurses program's output. See screencast
+above.
 
 ## More Examples? ##
 Looking for more examples and details on how it works? Head to the [man page](http://gwsocket.io/?src=gh)
