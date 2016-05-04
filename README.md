@@ -28,7 +28,7 @@ screencast above.
 * UTF-8 Handling
 * Framing (Text & Binary messages)
 * Multiplexed non-blocking network I/O
-* Ability to pipe data in/out in two different modes (stdin/stdout & strict mode)
+* Ability to pipe data in/out in two different modes (**stdin/stdout & strict mode**)
 * Origin-based restriction
 * It passes the [Autobahn Testsuite](http://gwsocket.io/autobahn/) :)
 * and of course, [Valgrind](http://valgrind.org/) tested
@@ -41,7 +41,7 @@ upcoming version (v1.0) of [**GoAccess**](https://goaccess.io/) by simply
 piping data in and out — WebSockets made easy!
 
 ## More Examples? ##
-gwsocket is language agnostic, look at the [Man Page](http://gwsocket.io/?src=gh)
+gwsocket is language agnostic, look at the [Man Page](http://gwsocket.io/man?src=gh)
 for more details and examples on how to receive data from the browser and how
 to send it to the browser.
 
@@ -108,7 +108,7 @@ The following options can be supplied to the command line.
 | `--strict`                   | Parse messages using strict mode. See man page for more details.    |
 
 ## Roadmap ##
-* Support for `epoll` and `kqueue`.
+* Support for `epoll` and `kqueue`
 * Support for SSL
 * Add more command line options
 * Add configuration file
