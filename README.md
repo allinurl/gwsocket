@@ -10,17 +10,6 @@ with ease and flexibility. More info at:
 
 ![gwsocket terminal](http://gwsocket.io/images/gwsocket-terminal-620.gif?2016050202)
 
-## Features ##
-* Message Fragmentation per section [5.4](https://tools.ietf.org/html/rfc6455#page-33)
-* UTF-8 Handling
-* Framing (Text & Binary messages)
-* Multiplexed non-blocking network I/O
-* Ability to pipe data in/out in two different modes (stdin/stdout & strict mode)
-* Origin-based restriction
-* It passes the [Autobahn Testsuite](http://gwsocket.io/autobahn/) :)
-* and of course, [Valgrind](http://valgrind.org/) tested
-* missing something?, please feel free to post it on Github.
-
 ## How it Works? ##
 Very simple, just redirect the output from your application **(stdout)** to a
 file (named pipe) and let **gwsocket** transfer the data to the browser —
@@ -33,6 +22,17 @@ For example, tailing your server's logs into the browser couldn't be easier
 You can also get the client's data into **(stdin)** your application. In fact,
 you can even send your favorite ncurses program's output to the browser. See
 screencast above.
+
+## Features ##
+* Message Fragmentation per section [5.4](https://tools.ietf.org/html/rfc6455#page-33)
+* UTF-8 Handling
+* Framing (Text & Binary messages)
+* Multiplexed non-blocking network I/O
+* Ability to pipe data in/out in two different modes (stdin/stdout & strict mode)
+* Origin-based restriction
+* It passes the [Autobahn Testsuite](http://gwsocket.io/autobahn/) :)
+* and of course, [Valgrind](http://valgrind.org/) tested
+* missing something?, please feel free to post it on Github.
 
 ## Why gwsocket? ##
 I needed a **fast**, **simple**, **no-dependencies**, **no libraries**,
