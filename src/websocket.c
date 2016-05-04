@@ -1137,6 +1137,7 @@ ws_get_handshake (WSClient * client, WSServer * server)
   gettimeofday (&client->end_proc, NULL);
   if (wsconfig.accesslog)
     access_log (client, 101);
+  LOG (("Active: %d\n", list_count (server->colist)));
 
   return ws_set_status (client, WS_OK, bytes);
 }
@@ -1675,6 +1676,8 @@ handle_tcp_close (int conn, WSClient * client, WSServer * server,
 
   /* remove client from our list */
   ws_remove_client_from_list (client, server);
+  LOG (("Active: %d\n", list_count (server->colist)));
+
   server->closing = 0;
   ws_close (conn);
 
