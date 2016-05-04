@@ -2,10 +2,10 @@ gwsocket [![Build Status](https://travis-ci.org/allinurl/gwsocket.svg?branch=mas
 ========
 
 ## What is it? ##
-**gwsocket** is a free, standalone, no dependencies, WebSocket Server. It sits
-between your application and the client's browser, giving the ability for
-bidirectional communication between these two with ease and flexibility. More
-info at:
+**gwsocket** is a simple, standalone, language-agnostic, RFC6455 compliant
+WebSocket Server, written in C. It sits between your application and the
+client's browser, giving fast bidirectional communication between these two
+with ease and flexibility. More info at:
 [http://gwsocket.io](http://gwsocket.io/?src=gh).
 
 ![gwsocket terminal](http://gwsocket.io/images/gwsocket-terminal-620.gif?2016050202)
@@ -16,31 +16,34 @@ info at:
 * Framing (Text & Binary messages)
 * Multiplexed non-blocking network I/O
 * Ability to pipe data in/out in two different modes (stdin/stdout & strict mode)
+* Origin-based restriction
 * It passes the [Autobahn Testsuite](http://gwsocket.io/autobahn/) :)
-* and of course, [Valgrind](http://valgrind.org/) tested.
+* and of course, [Valgrind](http://valgrind.org/) tested
 * missing something?, please feel free to post it on Github.
 
 ## How it Works? ##
-Very simple, just redirect/send the output **(stdout)** from your application
-to a file and let gwsocket do the rest. For example, tailing your server's logs
-into the browser couldn't be easier:
+Very simple, just redirect the output from your application **(stdout)** to a
+file (named pipe) and let **gwsocket** transfer the data to the browser —
+That's it.
+
+For example, tailing your server's logs into the browser couldn't be easier
 
     tail -f /var/log/nginx/access.log > /tmp/wspipein.fifo
 
-BTW, you can also get the client's data into **(stdin)** your application.
-
-In fact, you can even send your favorite **NCurses** program's output. See
+You can also get the client's data into **(stdin)** your application. In fact,
+you can even send your favorite ncurses program's output to the browser. See
 screencast above.
 
 ## Why gwsocket? ##
-I needed a simple, fast, no-dependencies, RFC6455 compliant WebSocket Server
-written in C that I could use as a library for the upcoming version (v1.0) of
-[**GoAccess**](https://goaccess.io/) by simply piping data in and out —
-WebSockets made easy!
+I needed a **fast**, **simple**, **no-dependencies**, **no libraries**,
+**RFC6455 compliant** WebSocket Server written in C that I could use for the
+upcoming version (v1.0) of [**GoAccess**](https://goaccess.io/) by simply
+piping data in and out — WebSockets made easy!
 
 ## More Examples? ##
-Looking for more examples and details on how it works? Head to the [man page](http://gwsocket.io/?src=gh)
-for more details.
+gwsocket is language agnostic, look at the [Man Page](http://gwsocket.io/?src=gh)
+for more details and examples on how to receive data from the browser and how
+to send it to the browser.
 
 ## Installation ##
 Installing gwsocket is pretty easy. Just download, extract and compile it with:
