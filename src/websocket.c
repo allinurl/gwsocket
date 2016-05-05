@@ -1721,7 +1721,7 @@ handle_accept (int listener, int *maxfd, WSEState * state, WSServer * server)
     return;
   }
 
-  LOG (("Accepted: %d %s.\n", newfd, client->remote_ip));
+  LOG (("Accepted: %d %s\n", newfd, client->remote_ip));
   FD_SET (newfd, &state->master);       /* add listener to master */
   if (newfd > *maxfd)
     *maxfd = newfd;
