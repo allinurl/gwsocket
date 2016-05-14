@@ -33,9 +33,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <getopt.h>
+#include <errno.h>
+#include <unistd.h>
 
-#include "websocket.h"
 #include "gwsocket.h"
+#include "log.h"
+#include "websocket.h"
 #include "xmalloc.h"
 
 static WSServer *server = NULL;
@@ -101,8 +104,9 @@ handle_signal_action (int sig_number)
 {
   if (sig_number == SIGINT) {
     printf ("SIGINT was catched!\n");
-    ws_stop (server);
-    exit (EXIT_SUCCESS);
+    /* if it fails to write, force stop */
+    if ((write (server->self_pipe[1], "x", 1)) == -1 && errno != EAGAIN)
+      ws_stop (server);
   } else if (sig_number == SIGPIPE) {
     printf ("SIGPIPE was catched!\n");
   }
@@ -234,12 +238,21 @@ read_option_args (int argc, char **argv)
   return 0;
 }
 
+static void
+set_self_pipe (void)
+{
+  /* Initialize self pipe. */
+  if (pipe (server->self_pipe) == -1)
+    FATAL ("Unable to create pipe: %s.", strerror (errno));
+
+  /* make the read and write pipe non-blocking */
+  set_nonblocking (server->self_pipe[0]);
+  set_nonblocking (server->self_pipe[1]);
+}
+
 int
 main (int argc, char **argv)
 {
-  if (setup_signals () != 0)
-    exit (EXIT_FAILURE);
-
   if ((server = ws_init ("0.0.0.0", "7890")) == NULL) {
     perror ("Error during ws_init.\n");
     exit (EXIT_FAILURE);
@@ -248,10 +261,14 @@ main (int argc, char **argv)
   server->onclose = onclose;
   server->onmessage = onmessage;
   server->onopen = onopen;
+
+  set_self_pipe ();
+  if (setup_signals () != 0)
+    exit (EXIT_FAILURE);
+
   if (read_option_args (argc, argv) == 0)
     ws_start (server);
-  else
-    ws_stop (server);
+  ws_stop (server);
 
   return EXIT_SUCCESS;
 }

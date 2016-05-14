@@ -500,7 +500,7 @@ ws_get_raddr (struct sockaddr *sa)
 }
 
 /* Set the fiven file descriptor as NON BLOCKING. */
-static void
+void
 set_nonblocking (int listener)
 {
   if (fcntl (listener, F_SETFL, fcntl (listener, F_GETFL, 0) | O_NONBLOCK) ==
@@ -2305,6 +2305,7 @@ ws_start (WSServer * server)
   ws_fifo (server, &state);
   ws_socket (&listener);
 
+  FD_SET (server->self_pipe[0], &state.master);
   FD_SET (listener, &state.master);
   maxfd = listener;
 
@@ -2323,13 +2324,20 @@ ws_start (WSServer * server)
         FATAL ("Unable to select: %s.", strerror (errno));
       }
     }
+    /* handle self-pipe trick */
+    if (FD_ISSET (server->self_pipe[0], &(state.rfds)))
+      break;
+
+    /* handle FIFOs */
+    ws_fifos (server, pipein, pipeout, &state);
+
     /* iterate over existing connections */
     for (conn = 0; conn <= maxfd; ++conn) {
-      if (conn != pipein->fd && conn != pipeout->fd) {
+      if (conn != pipein->fd && conn != pipeout->fd &&
+          conn != server->self_pipe[0]) {
         ws_listen (listener, &maxfd, conn, &state, server);
       }
     }
-    ws_fifos (server, pipein, pipeout, &state);
   }
 }
 
@@ -2407,6 +2415,7 @@ ws_init (const char *host, const char *port)
   WSServer *server = new_wsserver ();
   server->pipein = new_wspipein ();
   server->pipeout = new_wspipeout ();
+  memset (server->self_pipe, 0, sizeof (server->self_pipe));
 
   wsconfig.accesslog = NULL;
   wsconfig.host = host;

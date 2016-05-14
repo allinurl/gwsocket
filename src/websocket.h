@@ -258,6 +258,8 @@ typedef struct WSServer_
   int (*onmessage) (WSPipeOut * pipeout, WSClient * client);
   int (*onopen) (WSPipeOut * pipeout, WSClient * client);
 
+  /* self-pipe */
+  int self_pipe[2];
   /* FIFO reader */
   WSPipeIn *pipein;
   /* FIFO writer */
@@ -270,6 +272,7 @@ int ws_send_data (WSClient * client, WSOpcode opcode, const char *p, int sz);
 int ws_write_fifo (WSPipeOut * pipeout, char *buffer, int len);
 size_t pack_uint32 (void *buf, uint32_t val);
 size_t unpack_uint32 (const void *buf, uint32_t * val);
+void set_nonblocking (int listener);
 void ws_set_config_accesslog (const char *accesslog);
 void ws_set_config_echomode (int echomode);
 void ws_set_config_frame_size (int max_frm_size);
