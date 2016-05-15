@@ -103,12 +103,12 @@ static void
 handle_signal_action (int sig_number)
 {
   if (sig_number == SIGINT) {
-    printf ("SIGINT was catched!\n");
+    printf ("SIGINT caught!\n");
     /* if it fails to write, force stop */
     if ((write (server->self_pipe[1], "x", 1)) == -1 && errno != EAGAIN)
       ws_stop (server);
   } else if (sig_number == SIGPIPE) {
-    printf ("SIGPIPE was catched!\n");
+    printf ("SIGPIPE caught!\n");
   }
 }
 
