@@ -763,6 +763,9 @@ ws_queue_sockbuf (WSClient * client, const char *buffer, int len, int bytes)
 {
   WSQueue *queue = xcalloc (1, sizeof (WSQueue));
 
+  if (bytes < 1)
+    bytes = 0;
+
   queue->queued = xcalloc (len - bytes, sizeof (char));
   memcpy (queue->queued, buffer + bytes, len - bytes);
   queue->qlen = len - bytes;
