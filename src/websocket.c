@@ -2334,16 +2334,14 @@ ws_start (WSServer * server)
     if (FD_ISSET (server->self_pipe[0], &(state.rfds)))
       break;
 
-    /* handle FIFOs */
-    ws_fifos (server, pipein, pipeout, &state);
-
     /* iterate over existing connections */
     for (conn = 0; conn <= maxfd; ++conn) {
-      if (conn != pipein->fd && conn != pipeout->fd &&
-          conn != server->self_pipe[0]) {
+      if (conn != pipein->fd && conn != pipeout->fd) {
         ws_listen (listener, &maxfd, conn, &state, server);
       }
     }
+    /* handle FIFOs */
+    ws_fifos (server, pipein, pipeout, &state);
   }
 }
 
