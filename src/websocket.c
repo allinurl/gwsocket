@@ -1920,6 +1920,9 @@ ws_queue_fifobuf (WSPipeOut * pipeout, const char *buffer, int len, int bytes)
 {
   WSQueue **queue = &pipeout->fifoqueue;
 
+  if (bytes < 1)
+    bytes = 0;
+
   (*queue) = xcalloc (1, sizeof (WSQueue));
   (*queue)->queued = xcalloc (len - bytes, sizeof (char));
   memcpy ((*queue)->queued, buffer + bytes, len - bytes);
