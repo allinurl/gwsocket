@@ -68,14 +68,14 @@ cmd_help (void)
 
   printf (
   "Usage: "
-  "gwsocket [ options ... ] -p [--bind][--origin][...]\n"
+  "gwsocket [ options ... ] -p [--addr][--origin][...]\n"
   "The following options can also be supplied to the command:\n\n"
   ""
   "  -p --port=<port>         - Specifies the port to bind.\n"
   "  -h --help                - This help.\n"
   "  -V --version             - Display version information and exit.\n"
   "  --access-log=<path/file> - Specifies the path/file for the access log.\n"
-  "  --bind=<addr>            - Specifies the address to bind.\n"
+  "  --addr=<addr>            - Specify an IP address to bind to.\n"
   "  --echo-mode              - Echo all received messages.\n"
   "  --max-frame-size=<bytes> - Maximum size of a websocket frame. This\n"
   "                             includes received frames from the client\n"
