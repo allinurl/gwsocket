@@ -47,7 +47,7 @@ static WSServer *server = NULL;
 static char short_options[] = "p:Vh";
 static struct option long_opts[] = {
   {"port"           , required_argument , 0 , 'p' } ,
-  {"bind"           , required_argument , 0 ,  0  } ,
+  {"addr"           , required_argument , 0 ,  0  } ,
   {"echo-mode"      , no_argument       , 0 ,  0  } ,
   {"max-frame-size" , required_argument , 0 ,  0  } ,
   {"origin"         , required_argument , 0 ,  0  } ,
