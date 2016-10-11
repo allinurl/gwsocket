@@ -1,9 +1,9 @@
-.TH gwsocket 1 "MAY 2016" Linux "User Manuals"
+.TH gwsocket 1 "OCTOBER 2016" Linux "User Manuals"
 .SH NAME
 gwsocket is a standalone, simple, yet powerful rfc6455 compliant WebSocket Server.
 .SH SYNOPSIS
 .LP
-.B gwsocket -p [--bind][--origin][gwsocket options ...]
+.B gwsocket -p [--addr][--origin][gwsocket options ...]
 .SH DESCRIPTION
 .B gwsocket
 is a free (MIT Licensed), standalone, WebSocket Server. It sits
@@ -32,7 +32,7 @@ Display version information and exit.
 \fB\-\-access-log=<path/file>
 Specifies the path/file for the access log.
 .TP
-\fB\-\-bind=<addr>
+\fB\-\-addr=<addr>
 Specifies the address to bind.
 .TP
 \fB\-\-echo-mode
