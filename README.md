@@ -99,7 +99,7 @@ The following options can be supplied to the command line.
 | `-h --help`                  | Command line help.                                                  |
 | `-V --version`               | Display version information and exit.                               |
 | `--access-log=<path/file>`   | Specifies the path/file for the access log.                         |
-| `--bind=<addr>`              | Specifies the address to bind.                                      |
+| `--addr=<addr>`              | Specifies the address to bind.                                      |
 | `--echo-mode`                | Set the server to echo all received messages.                       |
 | `--max-frame-size=<bytes>`   | Maximum size of a websocket frame.                                  |
 | `--origin=<origin>`          | Ensure clients send the specified origin header upon handshake.     |
