@@ -13,7 +13,7 @@ src/config.log
 src/config.status
 src/.deps/
 src/stamp-h1
-goaccess
+gwsocket
 #merged from https://raw.github.com/github/gitignore/master/Autotools.gitignore
 # http://www.gnu.org/software/automake
 
