@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.59])
-AC_INIT([gwsocket], [0.1], [goaccess@prosoftcorp.com], [], [http://gwsocket.io])
+AC_INIT([gwsocket], [0.2], [goaccess@prosoftcorp.com], [], [http://gwsocket.io])
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([src/gwsocket.c])
 AC_CONFIG_HEADERS([src/config.h])
