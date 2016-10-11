@@ -1,3 +1,17 @@
+Tuesday, October 11, 2016 Gerardo Orellana (goaccess at prosoftcorp.com)
+
+  - Added a throttle mechanism for slow clients.
+  - Added byte-swapping functions for glibc < 2.9.
+  - Added missing command long option for binding address.
+  - Added the ability to display active connections on DEBUG mode.
+  - Fixed byte swap functions for Sun Solaris.
+  - Fixed memory leak on dangling client's referer header and queue on server
+    close.
+  - Fixed potential invalid memory read when queueing up fifo buffer.
+  - Fixed uint types in sha1 files.
+  - Refactored how all file descriptors are monitored under websocket.c.
+  - Renamed --bind command line option to --addr.
+
 Monday, May 02, 2016 Gerardo Orellana (goaccess at prosoftcorp.com)
 
   - Initial release 0.1
