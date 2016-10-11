@@ -8,7 +8,7 @@ client's browser, giving fast bidirectional communication between these two
 with ease and flexibility. More info at:
 [http://gwsocket.io](http://gwsocket.io/?src=gh).
 
-![gwsocket terminal](http://gwsocket.io/images/gwsocket-terminal-620.gif)
+![gwsocket terminal](https://cloud.githubusercontent.com/assets/5005367/19279261/515b6ec6-8fa6-11e6-8bc5-e109710bfb56.gif)
 
 ## How it Works? ##
 Very simple, just redirect the output from your application **(stdout)** to a
