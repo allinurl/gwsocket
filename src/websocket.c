@@ -528,7 +528,7 @@ ws_get_raddr (struct sockaddr *sa)
   return &(((struct sockaddr_in6 *) sa)->sin6_addr);
 }
 
-/* Set the fiven file descriptor as NON BLOCKING. */
+/* Set the given file descriptor as NON BLOCKING. */
 void
 set_nonblocking (int listener)
 {
