@@ -412,6 +412,9 @@ ws_remove_client_from_list (WSClient * client, WSServer * server)
 }
 
 #if HAVE_LIBSSL
+/* Attempt to send the TLS/SSL "close notify" shutdown and and removes
+ * the SSL structure pointed to by ssl and frees up the allocated
+ * memory. */
 static void
 ws_shutdown_dangling_clients (WSClient * client)
 {
@@ -420,6 +423,9 @@ ws_shutdown_dangling_clients (WSClient * client)
   client->ssl = NULL;
 }
 
+/* Attempt to remove the SSL_CTX object pointed to by ctx and frees up
+ * the allocated memory and cleans some more generally used TLS/SSL
+ * memory.  */
 static void
 ws_ssl_cleanup (WSServer * server)
 {
@@ -568,6 +574,12 @@ ws_append_str (char **dest, const char *src)
 }
 
 #if HAVE_LIBSSL
+/* Create a new SSL_CTX object as framework to establish TLS/SSL
+ * enabled connections.
+ *
+ * On error 1 is returned.
+ * On success, SSL_CTX object is malloc'd and 0 is returned.
+ */
 static int
 initialize_ssl_ctx (WSServer * server)
 {
@@ -739,6 +751,10 @@ handle_accept_ssl (WSClient * client, WSServer * server)
   }
 }
 
+/* Given the current status of the SSL buffer, perform that action.
+ *
+ * On error or if no SSL pending status, 1 is returned.
+ * On success, the TLS/SSL pending action is called and 0 is returned */
 static int
 handle_ssl_pending_rw (int conn, WSServer * server, WSClient * client)
 {
@@ -770,6 +786,11 @@ handle_ssl_pending_rw (int conn, WSServer * server, WSClient * client)
   return 1;
 }
 
+/* Write bytes to a TLS/SSL connection for a given client.
+ *
+ * On error or if no write is performed <=0 is returned.
+ * On success, the number of bytes actually written to the TLS/SSL
+ * connection are returned */
 static int
 send_ssl_buffer (WSClient * client, const char *buffer, int len)
 {
