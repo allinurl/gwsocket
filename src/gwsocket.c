@@ -41,6 +41,10 @@
 #include "websocket.h"
 #include "xmalloc.h"
 
+#if HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 static WSServer *server = NULL;
 
 /* *INDENT-OFF* */
@@ -53,6 +57,10 @@ static struct option long_opts[] = {
   {"origin"         , required_argument , 0 ,  0  } ,
   {"pipein"         , required_argument , 0 ,  0  } ,
   {"pipeout"        , required_argument , 0 ,  0  } ,
+#if HAVE_LIBSSL
+  {"sslcert"        , required_argument , 0 ,  0  } ,
+  {"sslkey"         , required_argument , 0 ,  0  } ,
+#endif
   {"access-log"     , required_argument , 0 ,  0  } ,
   {"strict"         , no_argument       , 0 ,  0  } ,
   {"version"        , no_argument       , 0 , 'V' } ,
@@ -88,6 +96,8 @@ cmd_help (void)
   "                             to on the given path/file.\n"
   "  --strict                 - Parse messages using strict mode. See\n"
   "                             man page for more details.\n"
+  "  --ssl-cert=<cert.crt>    - Path to SSL certificate.\n"
+  "  --ssl-key=<priv.key>     - Path to SSL private key.\n"
   "\n"
   "See the man page for more information `man gwsocket`.\n\n"
   "For more details visit: http://gwsocket.io\n"
@@ -201,6 +211,12 @@ parse_long_opt (const char *name, const char *oarg)
     ws_set_config_strict (1);
   if (!strcmp ("access-log", name))
     ws_set_config_accesslog (oarg);
+#if HAVE_LIBSSL
+  if (!strcmp ("sslcert", name))
+    ws_set_config_sslcert (oarg);
+  if (!strcmp ("sslkey", name))
+    ws_set_config_sslkey (oarg);
+#endif
 }
 
 /* Read the user's supplied command line options. */
