@@ -230,11 +230,6 @@ typedef struct WSEState_
 /* A WebSocket Client */
 typedef struct WSClient_
 {
-#ifdef HAVE_LIBSSL
-  SSL *ssl;
-  WSStatus sslstatus;           /* ssl connection status */
-#endif
-
   /* socket data */
   int listener;                 /* socket */
   char remote_ip[INET6_ADDRSTRLEN];     /* client IP */
@@ -248,6 +243,11 @@ typedef struct WSClient_
 
   struct timeval start_proc;
   struct timeval end_proc;
+
+#ifdef HAVE_LIBSSL
+  SSL *ssl;
+  WSStatus sslstatus;           /* ssl connection status */
+#endif
 } WSClient;
 
 /* Config OOptions */
