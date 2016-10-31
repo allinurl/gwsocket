@@ -58,8 +58,8 @@ static struct option long_opts[] = {
   {"pipein"         , required_argument , 0 ,  0  } ,
   {"pipeout"        , required_argument , 0 ,  0  } ,
 #if HAVE_LIBSSL
-  {"sslcert"        , required_argument , 0 ,  0  } ,
-  {"sslkey"         , required_argument , 0 ,  0  } ,
+  {"ssl-cert"       , required_argument , 0 ,  0  } ,
+  {"ssl-key"        , required_argument , 0 ,  0  } ,
 #endif
   {"access-log"     , required_argument , 0 ,  0  } ,
   {"strict"         , no_argument       , 0 ,  0  } ,
@@ -212,9 +212,9 @@ parse_long_opt (const char *name, const char *oarg)
   if (!strcmp ("access-log", name))
     ws_set_config_accesslog (oarg);
 #if HAVE_LIBSSL
-  if (!strcmp ("sslcert", name))
+  if (!strcmp ("ssl-cert", name))
     ws_set_config_sslcert (oarg);
-  if (!strcmp ("sslkey", name))
+  if (!strcmp ("ssl-key", name))
     ws_set_config_sslkey (oarg);
 #endif
 }
