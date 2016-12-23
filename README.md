@@ -109,7 +109,6 @@ The following options can be supplied to the command line.
 
 ## Roadmap ##
 * Support for `epoll` and `kqueue`
-* Support for SSL
 * Add more command line options
 * Add configuration file
 * Please feel free to open an issue to discuss a new feature.
