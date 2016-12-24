@@ -36,9 +36,9 @@ screencast above.
 
 ## Why gwsocket? ##
 I needed a **fast**, **simple**, **no-dependencies**, **no libraries**,
-**RFC6455 compliant** WebSocket Server written in C that I could use for the
-upcoming version (v1.0) of [**GoAccess**](https://goaccess.io/) by simply
-piping data in and out — WebSockets made easy!
+**RFC6455 compliant** WebSocket Server written in C that I could use for
+version 1.0 of [**GoAccess**](https://goaccess.io/) by simply piping data in
+and out — WebSockets made easy!
 
 ## More Examples? ##
 gwsocket is language agnostic, look at the [Man Page](http://gwsocket.io/man?src=gh)
