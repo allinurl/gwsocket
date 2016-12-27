@@ -1,4 +1,4 @@
-Tuesday, October 11, 2016 Gerardo Orellana (goaccess at prosoftcorp.com)
+Changes to GWSocket 0.2 - Tuesday, October 11, 2016
 
   - Added a throttle mechanism for slow clients.
   - Added byte-swapping functions for glibc < 2.9.
@@ -12,6 +12,6 @@ Tuesday, October 11, 2016 Gerardo Orellana (goaccess at prosoftcorp.com)
   - Refactored how all file descriptors are monitored under websocket.c.
   - Renamed --bind command line option to --addr.
 
-Monday, May 02, 2016 Gerardo Orellana (goaccess at prosoftcorp.com)
+Changes to GWSocket 0.1 - Monday, May 02, 2016
 
   - Initial release 0.1
