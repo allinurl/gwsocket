@@ -1728,7 +1728,7 @@ ws_handle_ping (WSClient * client)
  *
  * On error, or if the message is invalid, 1 is returned.
  * On success, or if the message is valid, 0 is returned. */
-static int
+int
 ws_validate_string (const char *str, int len)
 {
   uint32_t state = UTF8_VALID;
@@ -2588,8 +2588,7 @@ handle_strict_fifo (WSServer * server)
   readh = (*pa)->len;   /* read from payload so far */
   need = (*pa)->size - readh;   /* need to read */
   if (need > 0) {
-    if ((bytes =
-         ws_read_fifo (pi->fd, (*pa)->data, &(*pa)->len, readh, need)) < 0)
+    if ((bytes = ws_read_fifo (pi->fd, (*pa)->data, &(*pa)->len, readh, need)) < 0)
       return;
     if (bytes != need)
       return;
