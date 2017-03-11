@@ -114,7 +114,66 @@ verify_utf8 (uint32_t * state, const char *str, int len)
   return *state;
 }
 
-/* Allocate memory for a websocket client */
+/* Decode a character maintaining state and a byte, and returns the
+ * state achieved after processing the byte.
+ *
+ * The state after the by has been processed is returned. */
+static uint32_t
+utf8_decode (uint32_t * state, uint32_t * p, uint32_t b)
+{
+  uint32_t type = utf8d[(uint8_t) b];
+
+  *p = (*state != UTF8_VALID) ? (b & 0x3fu) | (*p << 6) : (0xff >> type) & (b);
+  *state = utf8d[256 + *state * 16 + type];
+
+  return *state;
+}
+
+/* Replace malformed sequences with a substitute character.
+ *
+ * On success, it replaces the whole sequence and return a malloc'd buffer. */
+static char *
+sanitize_utf8 (const char *str, int len)
+{
+  char *buf = NULL;
+  uint32_t state = UTF8_VALID, prev = UTF8_VALID, cp = 0;
+  int i = 0, j = 0, k = 0, l = 0;
+
+  buf = xcalloc (len + 1, sizeof (char));
+  for (; i < len; prev = state, ++i) {
+    switch (utf8_decode (&state, &cp, (unsigned char) str[i])) {
+    case UTF8_INVAL:
+      /* replace the whole sequence */
+      if (k) {
+        for (l = i - k; l < i; ++l)
+          buf[j++] = '?';
+      } else {
+        buf[j++] = '?';
+      }
+      state = UTF8_VALID;
+      if (prev != UTF8_VALID)
+        i--;
+      k = 0;
+      break;
+    case UTF8_VALID:
+      /* fill i - k valid continuation bytes */
+      if (k)
+        for (l = i - k; l < i; ++l)
+          buf[j++] = str[l];
+      buf[j++] = str[i];
+      k = 0;
+      break;
+    default:
+      /* UTF8_VALID + continuation bytes */
+      k++;
+      break;
+    }
+  }
+
+  return buf;
+}
+
+/* Allocate memory for a websocket server */
 static WSServer *
 new_wsserver (void)
 {
@@ -1550,7 +1609,12 @@ ws_get_handshake (WSClient * client, WSServer * server)
 int
 ws_send_data (WSClient * client, WSOpcode opcode, const char *p, int sz)
 {
-  ws_send_frame (client, opcode, p, sz);
+  char *buf = NULL;
+
+  buf = sanitize_utf8 (p, sz);
+  ws_send_frame (client, opcode, buf, sz);
+  free (buf);
+
   return 0;
 }
 
@@ -2588,7 +2652,8 @@ handle_strict_fifo (WSServer * server)
   readh = (*pa)->len;   /* read from payload so far */
   need = (*pa)->size - readh;   /* need to read */
   if (need > 0) {
-    if ((bytes = ws_read_fifo (pi->fd, (*pa)->data, &(*pa)->len, readh, need)) < 0)
+    if ((bytes =
+         ws_read_fifo (pi->fd, (*pa)->data, &(*pa)->len, readh, need)) < 0)
       return;
     if (bytes != need)
       return;
