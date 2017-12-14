@@ -65,3 +65,17 @@ AC_CHECK_FUNCS([gettimeofday memmove memset mkfifo select socket strcasecmp strc
 
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
+
+cat << EOF
+
+Your build configuration:
+
+  Prefix         : $prefix
+  Package        : $PACKAGE_NAME
+  Version        : $VERSION
+  Compiler flags : $CFLAGS
+  Linker flags   : $LIBS $LDFLAGS
+  TLS/SSL        : $openssl
+  Bugs           : $PACKAGE_BUGREPORT
+
+EOF
