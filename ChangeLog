@@ -1,4 +1,13 @@
-Changes to GWSocket 0.3 - ??? December ??? 2017
+Changes to GWSocket 0.3 - Wednesday, August 07 2018
+
+  - Added a 'build configuration' summary to configure.ac.
+  - Added additional debug messages when starting WebSocket server.
+  - Added support for openssl-1.1*.
+  - Added support for TLS/SSL
+  - Fixed clean up of invalid UTF-8 sequences in WebSocket server.
+  - Fixed header parsing issue for certain hosts when trying to upgrade
+    connection resulting in a 400 status code.
+  - Removed FIPS_mode_set() from websocket.c to make it compatible with LibreSSL.
 
 Changes to GWSocket 0.2 - Tuesday, October 11, 2016
 
