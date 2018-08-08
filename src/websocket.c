@@ -997,8 +997,8 @@ ws_get_method (const char *token)
 {
   const char *lookfor = NULL;
 
-  if ((lookfor = "GET", !memcmp (token, lookfor, 3)) ||
-      (lookfor = "get", !memcmp (token, lookfor, 3)))
+  if ((lookfor = "GET", !memcmp (token, "GET ", 4)) ||
+      (lookfor = "get", !memcmp (token, "get ", 4)))
     return lookfor;
   return NULL;
 }
@@ -1104,7 +1104,7 @@ ws_set_header_fields (char *line, WSHeaders * headers)
   if (line[0] == '\n' || line[0] == '\r')
     return 1;
 
-  if ((strstr (line, "GET")) || (strstr (line, "get"))) {
+  if ((strstr (line, "GET ")) || (strstr (line, "get "))) {
     if ((path = ws_parse_request (line, &method, &proto)) == NULL)
       return 1;
     headers->path = path;
