@@ -30,6 +30,6 @@
 #ifndef WS_H_INCLUDED
 #define WS_H_INCLUDED
 
-#define GW_VERSION "0.2"
+#define GW_VERSION "0.3"
 
 #endif // for #ifndef WS_H
