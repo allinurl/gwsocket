@@ -1647,7 +1647,12 @@ ws_send_data (WSClient * client, WSOpcode opcode, const char *p, int sz)
 {
   char *buf = NULL;
 
-  buf = sanitize_utf8 (p, sz);
+  if (opcode != WS_OPCODE_BIN) {
+    buf = sanitize_utf8 (p, sz);
+  } else {
+    buf = xmalloc (sz);
+    memcpy (buf, p, sz);
+  }
   ws_send_frame (client, opcode, buf, sz);
   free (buf);
 
