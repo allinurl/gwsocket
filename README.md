@@ -49,9 +49,9 @@ to send it to the browser.
 Installing gwsocket is pretty easy. Just download, extract and compile it with:
 
 ```
-$ wget http://tar.gwsocket.io/gwsocket-0.2.tar.gz
-$ tar -xzvf gwsocket-0.2.tar.gz
-$ cd gwsocket-0.2/
+$ wget http://tar.gwsocket.io/gwsocket-0.3.tar.gz
+$ tar -xzvf gwsocket-0.3.tar.gz
+$ cd gwsocket-0.3/
 $ ./configure
 $ make
 # make install
