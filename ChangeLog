@@ -1,4 +1,4 @@
-Changes to GWSocket 0.3 - Thursday, August 09 2018
+Changes to GWSocket 0.3 - Friday, August 10 2018
 
   - Added a 'build configuration' summary to configure.ac.
   - Added additional debug messages when starting WebSocket server.
