@@ -106,6 +106,8 @@ The following options can be supplied to the command line.
 | `--pipein=<path/file>`       | Creates a named pipe (FIFO) that reads from on the given path/file. |
 | `--pipeout=<path/file>`      | Creates a named pipe (FIFO) that writes to the given path/file.     |
 | `--strict`                   | Parse messages using strict mode. See man page for more details.    |
+| `--ssl-cert=<cert.crt>`      | Path to SSL certificate.                                            |
+| `--ssl-key=<priv.key>`       | Path to SSL private key.                                            |
 
 ## Roadmap ##
 * Support for `epoll` and `kqueue`
