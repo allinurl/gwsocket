@@ -57,6 +57,9 @@ static struct option long_opts[] = {
   {"origin"         , required_argument , 0 ,  0  } ,
   {"pipein"         , required_argument , 0 ,  0  } ,
   {"pipeout"        , required_argument , 0 ,  0  } ,
+  {"std"            , no_argument       , 0 ,  0  } ,
+  {"stdin"          , no_argument       , 0 ,  0  } ,
+  {"stdout"         , no_argument       , 0 ,  0  } ,
 #if HAVE_LIBSSL
   {"ssl-cert"       , required_argument , 0 ,  0  } ,
   {"ssl-key"        , required_argument , 0 ,  0  } ,
@@ -94,6 +97,9 @@ cmd_help (void)
   "                             from on the given path/file.\n"
   "  --pipeout=<path/file>    - Creates a named pipe (FIFO) that writes\n"
   "                             to on the given path/file.\n"
+  "  --std                    - Enable --stdin and --stdout.\n"
+  "  --stdin                  - Send stdin to the websocket.\n"
+  "  --stdout                 - Send received websocket data to stdout.\n"
   "  --strict                 - Parse messages using strict mode. See\n"
   "                             man page for more details.\n"
   "  --ssl-cert=<cert.crt>    - Path to SSL certificate.\n"
@@ -217,6 +223,14 @@ parse_long_opt (const char *name, const char *oarg)
   if (!strcmp ("ssl-key", name))
     ws_set_config_sslkey (oarg);
 #endif
+  if (!strcmp ("std", name)) {
+    ws_set_config_stdin (1);
+    ws_set_config_stdout (1);
+  }
+  if (!strcmp ("stdin", name))
+    ws_set_config_stdin (1);
+  if (!strcmp ("stdout", name))
+    ws_set_config_stdout (1);
 }
 
 /* Read the user's supplied command line options. */

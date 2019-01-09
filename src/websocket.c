@@ -547,7 +547,7 @@ ws_clear_pipein (WSPipeIn * pipein)
   if (!pipein)
     return;
 
-  if (pipein->fd != -1)
+  if (pipein->fd != -1  && !wsconfig.use_stdin)
     close (pipein->fd);
 
   ws_clear_fifo_packet (*packet);
@@ -564,7 +564,7 @@ ws_clear_pipeout (WSPipeOut * pipeout)
   if (!pipeout)
     return;
 
-  if (pipeout->fd != -1)
+  if (pipeout->fd != -1 && !wsconfig.use_stdout)
     close (pipeout->fd);
 
   free (pipeout);
@@ -2374,11 +2374,19 @@ ws_openfifo_out (WSPipeOut * pipeout)
 static void
 ws_fifo (WSServer * server)
 {
-  wsconfig.pipein = wsconfig.pipein ? wsconfig.pipein : WS_PIPEIN;
-  wsconfig.pipeout = wsconfig.pipeout ? wsconfig.pipeout : WS_PIPEOUT;
+  if (wsconfig.use_stdin) {
+    server->pipein->fd = STDIN_FILENO;
+  } else {
+    wsconfig.pipein = wsconfig.pipein ? wsconfig.pipein : WS_PIPEIN;
+    ws_openfifo_in (server->pipein);
+  }
 
-  ws_openfifo_in (server->pipein);
-  ws_openfifo_out (server->pipeout);
+  if (wsconfig.use_stdout) {
+    server->pipeout->fd = STDOUT_FILENO;
+  } else {
+    wsconfig.pipeout = wsconfig.pipeout ? wsconfig.pipeout : WS_PIPEOUT;
+    ws_openfifo_out (server->pipeout);
+  }
 }
 
 /* Clear the queue for an outgoing named pipe. */
@@ -2996,6 +3004,21 @@ ws_set_config_sslkey (const char *sslkey)
   wsconfig.sslkey = sslkey;
 }
 
+/* Use stdin instead of a pipe */
+void
+ws_set_config_stdin (int use_stdin)
+{
+  wsconfig.use_stdin = use_stdin;
+}
+
+
+/* Use stdout instead of a pipe */
+void
+ws_set_config_stdout (int use_stdout)
+{
+  wsconfig.use_stdout = use_stdout;
+}
+
 /* Create a new websocket server context. */
 WSServer *
 ws_init (const char *host, const char *port)
@@ -3016,6 +3039,8 @@ ws_init (const char *host, const char *port)
   wsconfig.port = port;
   wsconfig.strict = 0;
   wsconfig.use_ssl = 0;
+  wsconfig.use_stdin = 0;
+  wsconfig.use_stdout = 0;
 
   return server;
 }
