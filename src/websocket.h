@@ -288,6 +288,8 @@ typedef struct WSConfig_
   int strict;
   int max_frm_size;
   int use_ssl;
+  int use_stdin;
+  int use_stdout;
 } WSConfig;
 
 /* A WebSocket Instance */
@@ -333,6 +335,8 @@ void ws_set_config_pipeout (const char *pipeout);
 void ws_set_config_port (const char *port);
 void ws_set_config_sslcert (const char *sslcert);
 void ws_set_config_sslkey (const char *sslkey);
+void ws_set_config_stdin (int use_stdin);
+void ws_set_config_stdout (int use_stdout);
 void ws_set_config_strict (int strict);
 void ws_start (WSServer * server);
 void ws_stop (WSServer * server);
