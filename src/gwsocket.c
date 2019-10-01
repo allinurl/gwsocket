@@ -203,7 +203,7 @@ onmessage (WSPipeOut * pipeout, WSClient * client)
 static void
 parse_long_opt (const char *name, const char *oarg)
 {
-  if (!strcmp ("addr", name)
+  if (!strcmp ("addr", name))
     ws_set_config_host (oarg);
   if (!strcmp ("echo-mode", name))
     ws_set_config_echomode (1);
