@@ -7,7 +7,7 @@
  *
  *
  * The MIT License (MIT)
- * Copyright (c) 2009-2016 Gerardo Orellana <hello @ goaccess.io>
+ * Copyright (c) 2009-2020 Gerardo Orellana <hello @ goaccess.io>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,8 +32,7 @@
 #define GSLIST_H_INCLUDED
 
 /* Generic Single linked-list */
-typedef struct GSLList_
-{
+typedef struct GSLList_ {
   void *data;
   struct GSLList_ *next;
 } GSLList;
@@ -44,8 +43,7 @@ GSLList *list_find (GSLList * node, int (*func) (void *, void *), void *data);
 GSLList *list_insert_append (GSLList * node, void *data);
 GSLList *list_insert_prepend (GSLList * list, void *data);
 int list_count (GSLList * list);
-int list_foreach (GSLList * node, int (*func) (void *, void *),
-                  void *user_data);
+int list_foreach (GSLList * node, int (*func) (void *, void *), void *user_data);
 int list_remove_node (GSLList ** list, GSLList * node);
 int list_remove_nodes (GSLList * list);
 

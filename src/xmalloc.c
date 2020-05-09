@@ -7,7 +7,7 @@
  * \____/  |__/|__//____/\____/\___/_/|_|\___/\__/
  *
  * The MIT License (MIT)
- * Copyright (c) 2009-2016 Gerardo Orellana <hello @ goaccess.io>
+ * Copyright (c) 2009-2020 Gerardo Orellana <hello @ goaccess.io>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -41,8 +41,7 @@
 
 /* Self-checking wrapper to malloc() */
 void *
-xmalloc (size_t size)
-{
+xmalloc (size_t size) {
   void *ptr;
 
   if ((ptr = malloc (size)) == NULL)
@@ -52,8 +51,7 @@ xmalloc (size_t size)
 }
 
 char *
-xstrdup (const char *s)
-{
+xstrdup (const char *s) {
   char *ptr;
   size_t len;
 
@@ -66,8 +64,7 @@ xstrdup (const char *s)
 
 /* Self-checking wrapper to calloc() */
 void *
-xcalloc (size_t nmemb, size_t size)
-{
+xcalloc (size_t nmemb, size_t size) {
   void *ptr;
 
   if ((ptr = calloc (nmemb, size)) == NULL)
@@ -78,8 +75,7 @@ xcalloc (size_t nmemb, size_t size)
 
 /* Self-checking wrapper to realloc() */
 void *
-xrealloc (void *oldptr, size_t size)
-{
+xrealloc (void *oldptr, size_t size) {
   void *newptr;
 
   if ((newptr = realloc (oldptr, size)) == NULL)

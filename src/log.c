@@ -7,7 +7,7 @@
  * \____/  |__/|__//____/\____/\___/_/|_|\___/\__/
  *
  * The MIT License (MIT)
- * Copyright (c) 2009-2016 Gerardo Orellana <hello @ goaccess.io>
+ * Copyright (c) 2009-2020 Gerardo Orellana <hello @ goaccess.io>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -40,8 +40,7 @@ static FILE *log_file;
 
 /* Open a access file whose name is specified in the given path. */
 int
-access_log_open (const char *path)
-{
+access_log_open (const char *path) {
   if (path == NULL)
     return 0;
 
@@ -57,8 +56,7 @@ access_log_open (const char *path)
 
 /* Close the access log file. */
 void
-access_log_close (void)
-{
+access_log_close (void) {
   if (log_file != NULL)
     fclose (log_file);
 }
@@ -66,8 +64,7 @@ access_log_close (void)
 #pragma GCC diagnostic ignored "-Wformat-nonliteral"
 /* Debug otuput */
 void
-dbg_printf (const char *fmt, ...)
-{
+dbg_printf (const char *fmt, ...) {
   va_list args;
   va_start (args, fmt);
   vfprintf (stderr, fmt, args);
@@ -76,8 +73,7 @@ dbg_printf (const char *fmt, ...)
 
 /* Write formatted access log data to the logfile. */
 void
-access_fprintf (const char *fmt, ...)
-{
+access_fprintf (const char *fmt, ...) {
   va_list args;
 
   if (!log_file)
