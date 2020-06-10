@@ -41,11 +41,10 @@ AC_ARG_WITH([openssl],AC_HELP_STRING([--with-openssl], [build with OpenSSL suppo
 
 # Build with OpenSSL
 if test "$openssl" = 'yes'; then
-  AC_CHECK_LIB([ssl], [SSL_library_init],,[AC_MSG_ERROR([ssl library missing])])
-  AC_CHECK_LIB([crypto], [CRYPTO_num_locks],,[AC_MSG_ERROR([crypto library missing])])
+  AC_CHECK_LIB([ssl], [SSL_SESSION_new],,[AC_MSG_ERROR([ssl library missing])])
 fi
 # For Makefile.am
-#AM_CONDITIONAL(HAVE_OPENSSL, test "$openssl" = "yes")
+AM_CONDITIONAL(HAVE_OPENSSL, test "$openssl" = "yes")
 
 # Checks for header files.
 AC_CHECK_HEADERS([arpa/inet.h fcntl.h limits.h netdb.h netinet/in.h stddef.h stdint.h stdlib.h string.h sys/socket.h sys/time.h unistd.h])

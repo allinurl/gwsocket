@@ -24,8 +24,13 @@ else
 AM_CFLAGS = -O2
 endif
 
+AM_LDFLAGS = 
 if WITH_RDYNAMIC
-AM_LDFLAGS = -rdynamic
+AM_LDFLAGS += -rdynamic
+endif
+
+if HAVE_OPENSSL
+AM_LDFLAGS += -rdynamic
 endif
 
 AM_CFLAGS += -Wno-long-long -Wall -W -Wnested-externs -Wformat=2
