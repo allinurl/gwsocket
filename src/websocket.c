@@ -2567,9 +2567,9 @@ handle_strict_fifo (WSServer * server) {
   ptr += unpack_uint32 (ptr, &size);
 
   if (validate_fifo_packet (listener, type, size) == 1) {
-    close (pi->fd);
-    clear_fifo_packet (pi);
-    ws_openfifo_in (pi);
+    for(int i = 0; i < HDR_SIZE - 1; i++)
+      pi->hdr[i] = pi->hdr[i+1];
+    pi->hlen--;
     return;
   }
 
