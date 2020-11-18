@@ -1469,7 +1469,7 @@ ws_set_handshake_headers (WSHeaders * headers) {
   if (!headers->upgrade)
     headers->upgrade = xstrdup ("websocket");
   if (!headers->connection)
-    headers->upgrade = xstrdup ("Upgrade");
+    headers->connection = xstrdup ("Upgrade");
 
   free (s);
 }
