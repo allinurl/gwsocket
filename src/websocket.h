@@ -30,9 +30,10 @@
 #ifndef WEBSOCKET_H_INCLUDED
 #define WEBSOCKET_H_INCLUDED
 
+#include <sys/time.h>
 #include <netinet/in.h>
 #include <limits.h>
-#include <sys/select.h>
+#include <poll.h>
 
 #if HAVE_LIBSSL
 #include <openssl/crypto.h>
@@ -214,13 +215,6 @@ typedef struct WSMessage_ {
   int buflen;                   /* recv'd buf length so far (for each frame) */
 } WSMessage;
 
-/* FD event states */
-typedef struct WSEState_ {
-  fd_set master;
-  fd_set rfds;
-  fd_set wfds;
-} WSEState;
-
 /* A WebSocket Client */
 typedef struct WSClient_ {
   /* socket data */
@@ -228,7 +222,6 @@ typedef struct WSClient_ {
   char remote_ip[INET6_ADDRSTRLEN];     /* client IP */
 
   WSQueue *sockqueue;           /* sending buffer */
-  WSEState *state;              /* FDs states */
   WSHeaders *headers;           /* HTTP headers */
   WSFrame *frame;               /* frame headers */
   WSMessage *message;           /* message */
@@ -248,7 +241,6 @@ typedef struct WSPipeIn_ {
   int fd;                       /* named pipe FD */
 
   WSPacket *packet;             /* FIFO data's buffer */
-  WSEState *state;              /* FDs states */
 
   char hdr[HDR_SIZE];           /* FIFO header's buffer */
   int hlen;
@@ -257,7 +249,6 @@ typedef struct WSPipeIn_ {
 /* Pipe Out */
 typedef struct WSPipeOut_ {
   int fd;                       /* named pipe FD */
-  WSEState *state;              /* FDs states */
   WSQueue *fifoqueue;           /* FIFO out queue */
   WSStatus status;              /* connection status */
 } WSPipeOut;
@@ -328,6 +319,6 @@ void ws_set_config_stdout (int use_stdout);
 void ws_set_config_strict (int strict);
 void ws_start (WSServer * server);
 void ws_stop (WSServer * server);
-WSServer *ws_init (const char *host, const char *port);
+WSServer *ws_init (const char *host, const char *port, void (*initopts) (void));
 
 #endif // for #ifndef WEBSOCKET_H

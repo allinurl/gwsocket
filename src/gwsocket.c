@@ -46,6 +46,7 @@
 #endif
 
 static WSServer *server = NULL;
+static WSConfig gsconfig = { 0 };
 
 /* *INDENT-OFF* */
 static char short_options[] = "p:Vh";
@@ -198,34 +199,68 @@ onmessage (WSPipeOut * pipeout, WSClient * client) {
 static void
 parse_long_opt (const char *name, const char *oarg) {
   if (!strcmp ("addr", name))
-    ws_set_config_host (oarg);
+    gsconfig.host = oarg;
   if (!strcmp ("echo-mode", name))
-    ws_set_config_echomode (1);
+    gsconfig.echomode = 1;
   if (!strcmp ("max-frame-size", name))
-    ws_set_config_frame_size (atoi (oarg));
+    gsconfig.max_frm_size = atoi (oarg);
   if (!strcmp ("origin", name))
-    ws_set_config_origin (oarg);
+    gsconfig.origin = oarg;
   if (!strcmp ("pipein", name))
-    ws_set_config_pipein (oarg);
+    gsconfig.pipein = oarg;
   if (!strcmp ("pipeout", name))
-    ws_set_config_pipeout (oarg);
+    gsconfig.pipeout = oarg;
   if (!strcmp ("strict", name))
-    ws_set_config_strict (1);
+    gsconfig.strict = 1;
   if (!strcmp ("access-log", name))
-    ws_set_config_accesslog (oarg);
+    gsconfig.accesslog = oarg;
 #if HAVE_LIBSSL
   if (!strcmp ("ssl-cert", name))
-    ws_set_config_sslcert (oarg);
+    gsconfig.sslcert = oarg;
   if (!strcmp ("ssl-key", name))
-    ws_set_config_sslkey (oarg);
+    gsconfig.sslkey = oarg;
 #endif
   if (!strcmp ("std", name)) {
+    gsconfig.use_stdin = 1;
+    gsconfig.use_stdout = 1;
+  }
+  if (!strcmp ("stdin", name))
+    gsconfig.use_stdin = 1;
+  if (!strcmp ("stdout", name))
+    gsconfig.use_stdout = 1;
+}
+
+static void
+set_server_opts (void) {
+  if (gsconfig.host)
+    ws_set_config_host (gsconfig.host);
+  if (gsconfig.echomode)
+    ws_set_config_echomode (1);
+  if (gsconfig.max_frm_size)
+    ws_set_config_frame_size (gsconfig.max_frm_size);
+  if (gsconfig.origin)
+    ws_set_config_origin (gsconfig.origin);
+  if (gsconfig.pipein)
+    ws_set_config_pipein (gsconfig.pipein);
+  if (gsconfig.pipeout)
+    ws_set_config_pipeout (gsconfig.pipeout);
+  if (gsconfig.strict)
+    ws_set_config_strict (1);
+  if (gsconfig.accesslog)
+    ws_set_config_accesslog (gsconfig.accesslog);
+#if HAVE_LIBSSL
+  if (gsconfig.sslcert)
+    ws_set_config_sslcert (gsconfig.sslcert);
+  if (gsconfig.sslkey)
+    ws_set_config_sslkey (gsconfig.sslkey);
+#endif
+  if (gsconfig.use_stdin && gsconfig.use_stdout) {
     ws_set_config_stdin (1);
     ws_set_config_stdout (1);
   }
-  if (!strcmp ("stdin", name))
+  if (gsconfig.use_stdin)
     ws_set_config_stdin (1);
-  if (!strcmp ("stdout", name))
+  if (gsconfig.use_stdout)
     ws_set_config_stdout (1);
 }
 
@@ -276,7 +311,10 @@ set_self_pipe (void) {
 
 int
 main (int argc, char **argv) {
-  if ((server = ws_init ("0.0.0.0", "7890")) == NULL) {
+  if (read_option_args (argc, argv))
+    exit (EXIT_FAILURE);
+    
+  if ((server = ws_init ("0.0.0.0", "7890", set_server_opts)) == NULL) {
     perror ("Error during ws_init.\n");
     exit (EXIT_FAILURE);
   }
@@ -289,8 +327,7 @@ main (int argc, char **argv) {
   if (setup_signals () != 0)
     exit (EXIT_FAILURE);
 
-  if (read_option_args (argc, argv) == 0)
-    ws_start (server);
+  ws_start (server);
   ws_stop (server);
 
   return EXIT_SUCCESS;

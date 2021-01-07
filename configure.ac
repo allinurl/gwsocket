@@ -60,7 +60,21 @@ AC_CHECK_TYPES([ptrdiff_t])
 # Checks for library functions.
 AC_FUNC_MALLOC
 AC_FUNC_REALLOC
-AC_CHECK_FUNCS([gettimeofday memmove memset mkfifo select socket strcasecmp strchr strerror strpbrk strstr])
+AC_CHECK_FUNCS([gettimeofday])
+AC_CHECK_FUNCS([malloc])
+AC_CHECK_FUNCS([memmove])
+AC_CHECK_FUNCS([memset])
+AC_CHECK_FUNCS([mkfifo])
+AC_CHECK_FUNCS([poll])
+AC_CHECK_FUNCS([realloc])
+AC_CHECK_FUNCS([socket])
+AC_CHECK_FUNCS([strcasecmp])
+AC_CHECK_FUNCS([strchr])
+AC_CHECK_FUNCS([strerror])
+AC_CHECK_FUNCS([strcasecmp])
+AC_CHECK_FUNCS([strpbrk])
+AC_CHECK_FUNCS([strrchr])
+AC_CHECK_FUNCS([strstr])
 
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
