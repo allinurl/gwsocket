@@ -1220,7 +1220,7 @@ send_buffer (WSClient * client, const char *buffer, int len) {
 #endif
 }
 
-/* Attmpt to send the given buffer to the given socket.
+/* Attempt to send the given buffer to the given socket.
  *
  * On error, -1 is returned and the connection status is set.
  * On success, the number of bytes sent is returned. */
@@ -1905,7 +1905,7 @@ ws_set_masking_key (WSFrame * frm, const char *buf) {
   }
 }
 
-/* Attempt to read the frame's header and set the relavant data into
+/* Attempt to read the frame's header and set the relevant data into
  * our frame structure.
  *
  * On error, or if no data available to read, the number of bytes is
@@ -1994,7 +1994,7 @@ ws_realloc_frm_payload (WSFrame * frm, WSMessage * msg) {
   return 0;
 }
 
-/* Attempt to read the frame's payload and set the relavant data into
+/* Attempt to read the frame's payload and set the relevant data into
  * our message structure.
  *
  * On error, or if no data available to read, the number of bytes is
@@ -2163,7 +2163,7 @@ handle_reads (int conn, WSServer * server) {
   /* *INDENT-ON* */
   gettimeofday (&client->start_proc, NULL);
   read_client_data (client, server);
-  /* An error ocurred while reading data or connection closed */
+  /* An error occurred while reading data or connection closed */
   if ((client->status & WS_CLOSE)) {
     handle_read_close (conn, client, server);
   }
@@ -2193,7 +2193,7 @@ handle_writes (int conn, WSServer * server) {
   if (client->sockqueue == NULL)
     client->status &= ~WS_SENDING;
 
-  /* An error ocurred while sending data or while reading data but still
+  /* An error occurred while sending data or while reading data but still
    * waiting from the last send() from the server to the client.  e.g.,
    * sending status code */
   if ((client->status & WS_CLOSE) && !(client->status & WS_SENDING))
@@ -2346,7 +2346,7 @@ ws_queue_fifobuf (WSPipeOut * pipeout, const char *buffer, int len, int bytes) {
   pipeout->status |= WS_SENDING;
 }
 
-/* Attmpt to send the given buffer to the given outgoing FIFO.
+/* Attempt to send the given buffer to the given outgoing FIFO.
  *
  * On error, the data is queued up.
  * On success, the number of bytes sent is returned. */
@@ -2595,7 +2595,7 @@ handle_strict_fifo (WSServer * server) {
     return;
   }
 
-  /* Either send it to a specific client or brodcast message to all
+  /* Either send it to a specific client or broadcast message to all
    * clients */
   if (listener != 0)
     ws_send_strict_fifo_to_client (server, listener, *pa);
@@ -2632,7 +2632,7 @@ handle_fixed_fifo (WSServer * server) {
     return;
   }
 
-  /* brodcast message to all clients */
+  /* broadcast message to all clients */
   list_foreach (server->colist, ws_broadcast_fifo, *pa);
   clear_fifo_packet (pi);
 }
