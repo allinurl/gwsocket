@@ -180,7 +180,7 @@ get_pollfd (int fd) {
 
   for (pfd = fdstate; pfd < efd; pfd++) {
     if (pfd->fd == fd)
-       return pfd;
+      return pfd;
   }
 
   return NULL;
@@ -227,7 +227,7 @@ unset_pollfd (int fd) {
 
   efd = fdstate + nfdstate;
   if (pfd != efd)
-    memmove (pfd, pfd + 1, (char *)efd - (char *)pfd);
+    memmove (pfd, pfd + 1, (char *) efd - (char *) pfd);
 
   /* realloc could fail, but that's ok, we don't mind. */
   newstate = realloc (fdstate, sizeof (*pfd) * nfdstate);
@@ -311,7 +311,7 @@ escape_http_request (const char *src) {
   if (src == NULL || *src == '\0')
     return NULL;
 
-  p = (unsigned char *) src;
+  p = (const unsigned char *) src;
   q = dest = xmalloc (strlen (src) * 4 + 1);
 
   while (*p) {
@@ -361,7 +361,7 @@ strtoupper (char *str) {
     return str;
 
   while (*p != '\0') {
-    *p = toupper ((int)*p);
+    *p = toupper ((int) *p);
     p++;
   }
 
@@ -749,7 +749,7 @@ log_return_message (int ret, int err, const char *fn) {
     /* call was not successful because a fatal error occurred either at the
      * protocol level or a connection failure occurred. */
     if (ret != 0) {
-      LOG (("SSL bogus handshake interrupt: \n", strerror (errno)));
+      LOG (("SSL bogus handshake interrupt: %s\n", strerror (errno)));
       break;
     }
     /* call not yet finished. */
@@ -983,9 +983,9 @@ read_ssl_socket (WSClient * client, char *buffer, int size) {
 static void *
 ws_get_raddr (struct sockaddr *sa) {
   if (sa->sa_family == AF_INET)
-    return &(((struct sockaddr_in *) sa)->sin_addr);
+    return &(((struct sockaddr_in *) (void *) sa)->sin_addr);
 
-  return &(((struct sockaddr_in6 *) sa)->sin6_addr);
+  return &(((struct sockaddr_in6 *) (void *) sa)->sin6_addr);
 }
 
 /* Set the given file descriptor as NON BLOCKING. */
@@ -1484,7 +1484,7 @@ access_log (WSClient * client, int status_code) {
   ACCESS_LOG (("%d ", hdrs->buflen));
   ACCESS_LOG (("\"%s\" ", ref ? ref : "-"));
   ACCESS_LOG (("\"%s\" ", ua ? ua : "-"));
-  ACCESS_LOG (("%zu\n", elapsed));
+  ACCESS_LOG (("%u\n", elapsed));
 
   if (req)
     free (req);
@@ -1509,7 +1509,7 @@ http_error (WSClient * client, const char *buffer) {
 
 /* Compute the SHA1 for the handshake. */
 static void
-ws_sha1_digest (const char *s, int len, unsigned char *digest) {
+ws_sha1_digest (char *s, int len, unsigned char *digest) {
   SHA1_CTX sha;
 
   SHA1Init (&sha);
@@ -2774,7 +2774,7 @@ ws_start (WSServer * server) {
           LOG (("Handled self-pipe to close event loop.\n"));
           run = false;
           break;
-	}
+        }
       } else if (pfd->fd == server->pipein->fd) {
         /* handle pipein */
         if (pfd->revents & POLLIN)
