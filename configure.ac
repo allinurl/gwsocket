@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.59])
-AC_INIT([gwsocket], [0.3], [goaccess@prosoftcorp.com], [], [http://gwsocket.io])
+AC_INIT([gwsocket], [0.4], [goaccess@prosoftcorp.com], [], [http://gwsocket.io])
 AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([src/gwsocket.c])
 AC_CONFIG_HEADERS([src/config.h])
@@ -42,6 +42,7 @@ AC_ARG_WITH([openssl],AC_HELP_STRING([--with-openssl], [build with OpenSSL suppo
 # Build with OpenSSL
 if test "$openssl" = 'yes'; then
   AC_CHECK_LIB([ssl], [SSL_SESSION_new],,[AC_MSG_ERROR([ssl library missing])])
+  AC_CHECK_LIB([crypto], [CRYPTO_free],,[AC_MSG_ERROR([crypto library missing])])
 fi
 # For Makefile.am
 AM_CONDITIONAL(HAVE_OPENSSL, test "$openssl" = "yes")
