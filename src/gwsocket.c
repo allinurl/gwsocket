@@ -234,6 +234,8 @@ static void
 set_server_opts (void) {
   if (gsconfig.host)
     ws_set_config_host (gsconfig.host);
+  if (gsconfig.port)
+    ws_set_config_port (gsconfig.port);
   if (gsconfig.echomode)
     ws_set_config_echomode (1);
   if (gsconfig.max_frm_size)
@@ -274,7 +276,7 @@ read_option_args (int argc, char **argv) {
       break;
     switch (o) {
     case 'p':
-      ws_set_config_port (optarg);
+      gsconfig.port = optarg;
       break;
     case 'h':
       cmd_help ();
