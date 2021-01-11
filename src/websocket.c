@@ -2754,10 +2754,10 @@ ws_start (WSServer * server) {
      * any dispatch to modify the real fdstate for the next pass */
     if (ncfdstate != nfdstate) {
       free (cfdstate);
-      cfdstate = xmalloc (nfdstate * sizeof(*cfdstate));
+      cfdstate = xmalloc (nfdstate * sizeof (*cfdstate));
       ncfdstate = nfdstate;
     }
-    memcpy (cfdstate, fdstate, ncfdstate * sizeof(*cfdstate));
+    memcpy (cfdstate, fdstate, ncfdstate * sizeof (*cfdstate));
 
     /* yep, wait patiently */
     if (poll (cfdstate, nfdstate, -1) == -1) {
