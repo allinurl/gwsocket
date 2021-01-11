@@ -313,7 +313,7 @@ int
 main (int argc, char **argv) {
   if (read_option_args (argc, argv))
     exit (EXIT_FAILURE);
-    
+
   if ((server = ws_init ("0.0.0.0", "7890", set_server_opts)) == NULL) {
     perror ("Error during ws_init.\n");
     exit (EXIT_FAILURE);

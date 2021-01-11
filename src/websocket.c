@@ -591,7 +591,7 @@ ws_clear_pipein (WSPipeIn * pipein) {
   if (!pipein)
     return;
 
-  if (pipein->fd != -1)
+  if (pipein->fd != -1 && !wsconfig.use_stdin)
     ws_close (pipein->fd);
 
   ws_clear_fifo_packet (*packet);
@@ -607,7 +607,7 @@ ws_clear_pipeout (WSPipeOut * pipeout) {
   if (!pipeout)
     return;
 
-  if (pipeout->fd != -1)
+  if (pipeout->fd != -1 && !wsconfig.use_stdout)
     ws_close (pipeout->fd);
 
   free (pipeout);
@@ -2325,9 +2325,16 @@ ws_openfifo_out (WSPipeOut * pipeout) {
  * messages from the client. */
 static void
 ws_fifo (WSServer * server) {
-  ws_openfifo_in (server->pipein);
+  if (wsconfig.use_stdin)
+    server->pipein->fd = STDIN_FILENO;
+  else
+    ws_openfifo_in (server->pipein);
   set_pollfd (server->pipein->fd, POLLIN);
-  ws_openfifo_out (server->pipeout);
+
+  if (wsconfig.use_stdout)
+    server->pipeout->fd = STDOUT_FILENO;
+  else
+    ws_openfifo_out (server->pipeout);
   set_pollfd (server->pipeout->fd, POLLOUT);
 }
 
