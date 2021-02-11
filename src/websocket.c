@@ -619,30 +619,34 @@ ws_clear_pipeout (WSPipeOut * pipeout) {
 /* Stop the server and do some cleaning. */
 void
 ws_stop (WSServer * server) {
-  WSPipeIn **pipein = &server->pipein;
-  WSPipeOut **pipeout = &server->pipeout;
+  if (!server) {
+    return;
+  } else {
+    WSPipeIn **pipein = &server->pipein;
+    WSPipeOut **pipeout = &server->pipeout;
 
-  ws_clear_pipein (*pipein);
-  ws_clear_pipeout (*pipeout);
+    ws_clear_pipein (*pipein);
+    ws_clear_pipeout (*pipeout);
 
-  /* close access log (if any) */
-  if (wsconfig.accesslog)
-    access_log_close ();
+    /* close access log (if any) */
+    if (wsconfig.accesslog)
+      access_log_close ();
 
-  /* remove dangling clients */
-  if (list_count (server->colist) > 0)
-    list_foreach (server->colist, ws_remove_dangling_clients, NULL);
+    /* remove dangling clients */
+    if (list_count (server->colist) > 0)
+      list_foreach (server->colist, ws_remove_dangling_clients, NULL);
 
-  if (server->colist)
-    list_remove_nodes (server->colist);
+    if (server->colist)
+      list_remove_nodes (server->colist);
 
 #ifdef HAVE_LIBSSL
-  ws_ssl_cleanup (server);
+    ws_ssl_cleanup (server);
 #endif
 
-  free (server);
-  free (fdstate);
-  fdstate = NULL;
+    free (server);
+    free (fdstate);
+    fdstate = NULL;
+  }
 }
 
 /* Set the connection status for the given client and return the given
