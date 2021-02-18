@@ -17,7 +17,11 @@ That's it.
 
 For example, tailing your server's logs into the browser couldn't be easier
 
-    tail -f /var/log/nginx/access.log > /tmp/wspipein.fifo
+    # tail -f /var/log/nginx/access.log > /tmp/wspipein.fifo
+
+OR
+
+    # tail -f /var/log/nginx/access.log | gwsocket
 
 You can also get the client's data into **(stdin)** your application. In fact,
 you can even send your favorite ncurses program's output to the browser. See
