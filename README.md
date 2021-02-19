@@ -11,9 +11,9 @@ with ease and flexibility. More info at:
 ![gwsocket terminal](https://cloud.githubusercontent.com/assets/5005367/19279261/515b6ec6-8fa6-11e6-8bc5-e109710bfb56.gif)
 
 ## How it Works? ##
-Very simple, just redirect the output from your application **(stdout)** to a
-file (named pipe) and let **gwsocket** transfer the data to the browser —
-That's it.
+Very simple, just redirect the output from your application **(stdout)** to
+`stdin` or to file (named pipe) and let **gwsocket** transfer the data to the
+browser — That's it.
 
 For example, tailing your server's logs into the browser couldn't be easier
 
