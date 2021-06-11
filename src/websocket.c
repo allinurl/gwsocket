@@ -2331,14 +2331,18 @@ static void
 ws_fifo (WSServer * server) {
   if (wsconfig.use_stdin)
     server->pipein->fd = STDIN_FILENO;
-  else
+  else {
+    wsconfig.pipein = wsconfig.pipein ? wsconfig.pipein : WS_PIPEIN;
     ws_openfifo_in (server->pipein);
+  }
   set_pollfd (server->pipein->fd, POLLIN);
 
   if (wsconfig.use_stdout)
     server->pipeout->fd = STDOUT_FILENO;
-  else
+  else {
+    wsconfig.pipeout = wsconfig.pipeout ? wsconfig.pipeout : WS_PIPEOUT;
     ws_openfifo_out (server->pipeout);
+  }
   set_pollfd (server->pipeout->fd, POLLOUT);
 }
 
