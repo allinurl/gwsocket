@@ -2158,6 +2158,8 @@ read_client_data (WSClient * client, WSServer * server) {
 /* Handle a tcp close connection. */
 static void
 handle_tcp_close (int conn, WSClient * client, WSServer * server) {
+    LOG (("Closing TCP %d [%s]\n", client->listener, client->remote_ip));
+
 #ifdef HAVE_LIBSSL
   if (client->ssl)
     shutdown_ssl (client);
