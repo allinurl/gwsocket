@@ -2538,7 +2538,6 @@ ws_broadcast_fifo (void *value, void *user_data) {
     LOG (("No headers. Closing %d [%s]\n", client->listener, client->remote_ip));
 
     handle_tcp_close (client->listener, client, server);
-    client->status = WS_CLOSE;
     return 0;
   }
 
@@ -2561,7 +2560,6 @@ ws_send_strict_fifo_to_client (WSServer * server, int listener, WSPacket * pa) {
     LOG (("No headers. Closing %d [%s]\n", client->listener, client->remote_ip));
 
     handle_tcp_close (client->listener, client, server);
-    client->status = WS_CLOSE;
     return;
   }
   ws_send_data (client, pa->type, pa->data, pa->len);
