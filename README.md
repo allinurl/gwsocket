@@ -109,7 +109,9 @@ The following options can be supplied to the command line.
 | `--origin=<origin>`          | Ensure clients send the specified origin header upon handshake.     |
 | `--pipein=<path/file>`       | Creates a named pipe (FIFO) that reads from on the given path/file. |
 | `--pipeout=<path/file>`      | Creates a named pipe (FIFO) that writes to the given path/file.     |
+| `--std`                      | Enable `--stdin` and `--stdout`.                                    |
 | `--stdin`                    | Send stdin to the websocket.                                        |
+| `--stdout`                   | Send received websocket data to stdout.                             |
 | `--strict`                   | Parse messages using strict mode. See man page for more details.    |
 | `--ssl-cert=<cert.crt>`      | Path to SSL certificate.                                            |
 | `--ssl-key=<priv.key>`       | Path to SSL private key.                                            |

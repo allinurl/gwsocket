@@ -51,8 +51,14 @@ Creates a named pipe (FIFO) that reads from on the given path/file.
 \fB\-\-pipeout=<path/file>
 Creates a named pipe (FIFO) that writes to the given path/file.
 .TP
+\fB\-\-std
+Enable --stdin and --stdout.
+.TP
 \fB\-\-stdin
-Send stdin to the websocket instead of a FIFO.
+Send stdin to the websocket.
+.TP
+\fB\-\-stdout
+Send received websocket data to stdout.
 .TP
 \fB\-\-strict
 Parse messages using strict mode. See below for more details.
