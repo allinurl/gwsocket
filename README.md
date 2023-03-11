@@ -115,6 +115,7 @@ The following options can be supplied to the command line.
 | `--strict`                   | Parse messages using strict mode. See man page for more details.    |
 | `--ssl-cert=<cert.crt>`      | Path to SSL certificate.                                            |
 | `--ssl-key=<priv.key>`       | Path to SSL private key.                                            |
+| `--unix-socket=<addr>`       | Specify UNIX-domain socket address to bind server to.               |
 
 ## Roadmap ##
 * Support for `epoll` and `kqueue`
