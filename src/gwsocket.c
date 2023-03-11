@@ -66,6 +66,7 @@ static struct option long_opts[] = {
   {"ssl-key"        , required_argument , 0 ,  0  } ,
 #endif
   {"access-log"     , required_argument , 0 ,  0  } ,
+  {"unix-socket"    , required_argument , 0 ,  0  } ,
   {"strict"         , no_argument       , 0 ,  0  } ,
   {"version"        , no_argument       , 0 , 'V' } ,
   {"help"           , no_argument       , 0 , 'h' } ,
@@ -105,6 +106,8 @@ cmd_help (void)
   "                             man page for more details.\n"
   "  --ssl-cert=<cert.crt>    - Path to SSL certificate.\n"
   "  --ssl-key=<priv.key>     - Path to SSL private key.\n"
+  "  --unix-socket=<addr>     - Specify UNIX-domain socket address to\n"
+  "                             bind server to.\n"
   "\n"
   "See the man page for more information `man gwsocket`.\n\n"
   "For more details visit: http://gwsocket.io\n"
@@ -228,6 +231,8 @@ parse_long_opt (const char *name, const char *oarg) {
     gsconfig.use_stdin = 1;
   if (!strcmp ("stdout", name))
     gsconfig.use_stdout = 1;
+  if (!strcmp ("unix-socket", name))
+    gsconfig.unix_socket = oarg;
 }
 
 static void
@@ -264,6 +269,8 @@ set_server_opts (void) {
     ws_set_config_stdin (1);
   if (gsconfig.use_stdout)
     ws_set_config_stdout (1);
+  if (gsconfig.unix_socket)
+    ws_set_config_unix_socket (gsconfig.unix_socket);
 }
 
 /* Read the user's supplied command line options. */
