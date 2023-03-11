@@ -1,3 +1,22 @@
+Changes to GWSocket 0.4 - Friday, March 10 2023
+
+  - Added missing '--addr' to the command long options.
+  - Added support for 'stdin' / 'stdout'.
+  - Added websocket server bind on unix-domain sockets via
+    '--unix-socket=<addr>'.
+  - Ensure client is not accessed since it's closed and freed under
+    handle_tcp_close().
+  - Ensure 'localtime_r' is use for thread-safe ops.
+  - Ensure port is set upon passing '--port'. 
+  - Ensure we have a default path to WS_PIPEIN|WS_PIPEOUT.
+  - Fixed build issue due to missing -lcrypto.
+  - Fixed build issue with OpenSSL 1.1.0 or newer.
+  - Fixed issue where an invalid client connection would stall data out to
+    clients.
+  - Fixed strict protocol invalid packet handling.
+  - Fixed websocket issue returning a 400 due to request header size.
+  - Replaced 'select(2)' with the more efficient 'poll(2)'.
+
 Changes to GWSocket 0.3 - Friday, August 10 2018
 
   - Added a 'build configuration' summary to configure.ac.
