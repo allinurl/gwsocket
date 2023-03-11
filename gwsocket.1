@@ -52,7 +52,13 @@ Creates a named pipe (FIFO) that reads from on the given path/file.
 Creates a named pipe (FIFO) that writes to the given path/file.
 .TP
 \fB\-\-std
-Enable --stdin and --stdout.
+Enable --stdin and --stdout. By default named pipes are used for I/O. This adds the option to use stdin / stdout as well. For example, this allows:
+    
+    ./gwsocket --std > log.txt
+
+    tail -F /var/log/syslog | ./gwsocket --std
+    
+    --stdin and --stdout are added for fine grained control.
 .TP
 \fB\-\-stdin
 Send stdin to the websocket.
