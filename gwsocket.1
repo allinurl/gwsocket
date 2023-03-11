@@ -1,4 +1,4 @@
-.TH gwsocket 1 "AUGUST 2018" Linux "User Manuals"
+.TH gwsocket 1 "MARCH 2023" Linux "User Manuals"
 .SH NAME
 gwsocket is a standalone, simple, yet powerful rfc6455 compliant WebSocket Server.
 .SH SYNOPSIS
@@ -50,6 +50,9 @@ Creates a named pipe (FIFO) that reads from on the given path/file.
 .TP
 \fB\-\-pipeout=<path/file>
 Creates a named pipe (FIFO) that writes to the given path/file.
+.TP
+\fB\-\-stdin
+Send stdin to the websocket instead of a FIFO.
 .TP
 \fB\-\-strict
 Parse messages using strict mode. See below for more details.
