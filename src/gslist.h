@@ -37,6 +37,14 @@ typedef struct GSLList_ {
   struct GSLList_ *next;
 } GSLList;
 
+#define GSLIST_FOREACH(node, data, code) {  \
+  GSLList *__tmp = node;                    \
+  while (__tmp) {                           \
+    (data) = __tmp->data;                   \
+    code;                                   \
+    __tmp = __tmp->next;                    \
+  }}
+
 /* single linked-list */
 GSLList *list_create (void *data);
 GSLList *list_find (GSLList * node, int (*func) (void *, void *), void *data);
