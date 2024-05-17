@@ -6,7 +6,7 @@ gwsocket [![gwsocket](http://gwsocket.io/badge?v0.1)](http://gwsocket.io)
 WebSocket Server, written in C. It sits between your application and the
 client's browser, giving fast bidirectional communication between these two
 with ease and flexibility. More info at:
-[http://gwsocket.io](http://gwsocket.io/?src=gh).
+[https://gwsocket.io](https://gwsocket.io/?src=gh).
 
 ![gwsocket terminal](https://cloud.githubusercontent.com/assets/5005367/19279261/515b6ec6-8fa6-11e6-8bc5-e109710bfb56.gif)
 
@@ -34,7 +34,7 @@ screencast above.
 * Multiplexed non-blocking network I/O
 * Ability to pipe data in/out in two different modes (**stdin/stdout & strict mode**)
 * Origin-based restriction
-* It passes the [Autobahn Testsuite](http://gwsocket.io/autobahn/) :)
+* It passes the [Autobahn Testsuite](https://gwsocket.io/autobahn/) :)
 * and of course, [Valgrind](http://valgrind.org/) tested
 * missing something?, please feel free to post it on Github.
 
@@ -45,7 +45,7 @@ version 1.0 of [**GoAccess**](https://goaccess.io/) by simply piping data in
 and out — WebSockets made easy!
 
 ## More Examples? ##
-gwsocket is language agnostic, look at the [Man Page](http://gwsocket.io/man?src=gh)
+gwsocket is language agnostic, look at the [Man Page](https://gwsocket.io/man?src=gh)
 for more details and examples on how to receive data from the browser and how
 to send it to the browser.
 
@@ -53,7 +53,7 @@ to send it to the browser.
 Installing gwsocket is pretty easy. Just download, extract and compile it with:
 
 ```
-$ wget http://tar.gwsocket.io/gwsocket-0.4.tar.gz
+$ wget https://tar.gwsocket.io/gwsocket-0.4.tar.gz
 $ tar -xzvf gwsocket-0.4.tar.gz
 $ cd gwsocket-0.4/
 $ ./configure
@@ -64,7 +64,7 @@ No dependencies needed. How nice isn't it :), well almost, you need `gcc`, `make
 
 ## Build from GitHub ##
 ```
-$ git clone https://github.com/allinurl/gwsocket.git
+$ git clone s://github.com/allinurl/gwsocket.git
 $ cd gwsocket
 $ autoreconf -fiv
 $ ./configure
@@ -83,7 +83,7 @@ followed by the payload. See options below for more details.
 The standard input/output is the simplest way of sending/receiving data to/from
 a client. However, it's limited to broadcasting messages to all clients. To
 send messages to or receive from a specific client, use the strict mode in the
-next section. See language specific examples [here](http://gwsocket.io/).
+next section. See language specific examples [here](https://gwsocket.io/).
 
 ### Strict Mode ###
 gwsocket implements its own tiny protocol for sending/receiving data. In
@@ -91,7 +91,7 @@ contrast to the **stdin/stdout** mode, the strict mode allows you to
 send/receive data to/from specific connected clients as well as to keep track
 of who opened/closed a WebSocket connection. It also gives you the ability to
 pack and send as much data as you would like on a single message. See language
-specific examples [here](http://gwsocket.io/).
+specific examples [here](https://gwsocket.io/).
 
 ## Command Line / Config Options ##
 The following options can be supplied to the command line.
