@@ -2866,8 +2866,14 @@ ws_start (WSServer * server) {
         LOG (("Got POLLHUP %d\n", pfd->fd));
       if (pfd->revents & POLLNVAL)
         LOG (("Got POLLNVAL %d\n", pfd->fd));
-      if (pfd->revents & POLLERR)
+      if (pfd->revents & POLLERR) {
         LOG (("Got POLLERR %d\n", pfd->fd));
+        if (pfd->fd == server->pipeout->fd) {
+                 LOG (("Reopen pipeout\n"));
+                 ws_close (pfd->fd);
+                 ws_openfifo_out (server->pipeout);
+           }
+      }
 
       /* handle self-pipe trick */
       if (pfd->fd == server->self_pipe[0]) {
