@@ -261,10 +261,6 @@ set_server_opts (void) {
   if (gsconfig.sslkey)
     ws_set_config_sslkey (gsconfig.sslkey);
 #endif
-  if (gsconfig.use_stdin && gsconfig.use_stdout) {
-    ws_set_config_stdin (1);
-    ws_set_config_stdout (1);
-  }
   if (gsconfig.use_stdin)
     ws_set_config_stdin (1);
   if (gsconfig.use_stdout)
