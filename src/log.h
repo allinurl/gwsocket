@@ -32,7 +32,7 @@
 
 #define FATAL(fmt, ...) do {                                                  \
   fprintf (stderr, "\nFatal error has occurred");                             \
-  fprintf (stderr, "\nError occured at: %s - %s - %d\n", __FILE__,            \
+  fprintf (stderr, "\nError occurred at: %s - %s - %d\n", __FILE__,            \
            __FUNCTION__, __LINE__);                                           \
   fprintf (stderr, fmt, ##__VA_ARGS__);                                       \
   fprintf (stderr, "\n\n");                                                   \
