@@ -2054,7 +2054,7 @@ ws_get_frm_header (WSClient * client) {
   ws_set_payloadlen ((*frm), (*frm)->buf);
   ws_set_masking_key ((*frm), (*frm)->buf);
 
-  if ((*frm)->payloadlen > wsconfig.max_frm_size) {
+  if ((*frm)->payloadlen > (uint64_t) wsconfig.max_frm_size) {
     ws_error (client, WS_CLOSE_TOO_LARGE, "Frame is too big");
     return ws_set_status (client, WS_ERR | WS_CLOSE, bytes);
   }
@@ -2076,6 +2076,9 @@ ws_realloc_frm_payload (WSFrame * frm, WSMessage * msg) {
   uint64_t newlen = 0;
 
   newlen = msg->payloadsz + frm->payloadlen;
+  if (newlen > (uint64_t) wsconfig.max_frm_size)
+    return 1;
+
   tmp = realloc (msg->payload, newlen);
   if (tmp == NULL && newlen > 0) {
     free (msg->payload);
@@ -2296,24 +2299,32 @@ handle_writes (int *conn, WSServer * server) {
     handle_write_close (*conn, client, server);
 }
 
-/* Create named pipe (FIFO) with the given pipe name.
+/* Create an owner-only named pipe (FIFO) with the given pipe name, reusing an
+ * existing FIFO only when it belongs to the current user.
  *
- * On error, 1 is returned.
+ * On error, the process exits.
  * On success, 0 is returned. */
 int
 ws_setfifo (const char *pipename) {
   struct stat fistat;
   const char *f = pipename;
 
-  if (access (f, F_OK) == 0)
+  if (lstat (f, &fistat) == 0) {
+    if (!S_ISFIFO (fistat.st_mode))
+      FATAL ("pipe is not a fifo: %s.", f);
+    if (fistat.st_uid != geteuid ())
+      FATAL ("fifo is not owned by the current user: %s.", f);
+    if (fistat.st_mode & (S_IRWXG | S_IRWXO))
+      FATAL ("fifo is accessible by other users: %s. Remove it before restarting.", f);
     return 0;
+  }
 
-  if (mkfifo (f, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH) < 0)
+  if (mkfifo (f, S_IRUSR | S_IWUSR) < 0)
     FATAL ("Unable to set fifo: %s.", strerror (errno));
-  if (stat (f, &fistat) < 0)
+  if (lstat (f, &fistat) < 0)
     FATAL ("Unable to stat fifo: %s.", strerror (errno));
   if (!S_ISFIFO (fistat.st_mode))
-    FATAL ("pipe is not a fifo: %s.", strerror (errno));
+    FATAL ("pipe is not a fifo: %s.", f);
 
   return 0;
 }
@@ -2781,29 +2792,38 @@ ws_socket (int *listener) {
     if (bind (*listener, (struct sockaddr *) &servaddr, sizeof (servaddr)) != 0)
       FATAL ("Unable to set bind: %s.", strerror (errno));
   } else {
-    int ov = 1;
-    struct addrinfo hints, *ai;
+    int ov = 1, bind_result = 0;
+    struct addrinfo hints, *ai, *p;
 
-    /* get a socket and bind it */
-    memset (&hints, 0, sizeof hints);
+    memset (&hints, 0, sizeof (hints));
     hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_STREAM;
-    /*hints.ai_flags = AI_PASSIVE; */
+
     if (getaddrinfo (wsconfig.host, wsconfig.port, &hints, &ai) != 0)
       FATAL ("Unable to set server: %s.", gai_strerror (errno));
 
-    /* Create a TCP socket.  */
-    if ((*listener = socket (ai->ai_family, ai->ai_socktype, ai->ai_protocol)) == -1)
-      FATAL ("Unable to open socket: %s.", strerror (errno));
+    for (p = ai; p != NULL; p = p->ai_next) {
+      *listener = socket (p->ai_family, p->ai_socktype, p->ai_protocol);
+      if (*listener == -1)
+        continue;
 
-    /* Options */
-    if (setsockopt (*listener, SOL_SOCKET, SO_REUSEADDR, &ov, sizeof (ov)) == -1)
-      FATAL ("Unable to set setsockopt: %s.", strerror (errno));
+      if (setsockopt (*listener, SOL_SOCKET, SO_REUSEADDR, &ov, sizeof (ov)) == -1) {
+        close (*listener);
+        continue;
+      }
 
-    /* Bind the socket to the address. */
-    if (bind (*listener, ai->ai_addr, ai->ai_addrlen) != 0)
-      FATAL ("Unable to set bind: %s.", strerror (errno));
+      if (bind (*listener, p->ai_addr, p->ai_addrlen) == 0) {
+        bind_result = 1;
+        break;
+      }
+
+      close (*listener);
+    }
+
     freeaddrinfo (ai);
+
+    if (bind_result == 0)
+      FATAL ("Unable to set bind: %s.", strerror (errno));
   }
 
   /* Tell the socket to accept connections. */
@@ -2840,13 +2860,15 @@ ws_start (WSServer * server) {
   while (run) {
     /* take a copy of the fdstate and give that to poll to allow
      * any dispatch to modify the real fdstate for the next pass */
-    if (ncfdstate != nfdstate) {
-      free (cfdstate);
-      cfdstate = xmalloc (nfdstate * sizeof (*cfdstate));
-      memset (cfdstate, 0, sizeof (*cfdstate) * nfdstate);
-      ncfdstate = nfdstate;
+    if (nfdstate > 0) {
+      if (ncfdstate != nfdstate) {
+        free (cfdstate);
+        cfdstate = xmalloc (nfdstate * sizeof (*cfdstate));
+        memset (cfdstate, 0, sizeof (*cfdstate) * nfdstate);
+        ncfdstate = nfdstate;
+      }
+      memcpy (cfdstate, fdstate, ncfdstate * sizeof (*cfdstate));
     }
-    memcpy (cfdstate, fdstate, ncfdstate * sizeof (*cfdstate));
 
     /* yep, wait patiently */
     if ((ret = poll (cfdstate, nfdstate, -1)) == -1) {

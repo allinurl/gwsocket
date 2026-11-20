@@ -1,3 +1,12 @@
+Changes to GWSocket - Unreleased
+
+  - Added dual-stack support when binding the WebSocket server.
+  - Avoided swapping bytes on big-endian platforms.
+  - Fixed a NULL pointer dereference in ws_start() when no descriptors are
+    being polled.
+  - Fixed WebSocket payload size checks for large and fragmented messages.
+  - Restricted WebSocket FIFOs to the owning user.
+
 Changes to GWSocket 0.4 - Friday, March 10 2023
 
   - Added missing '--addr' to the command long options.

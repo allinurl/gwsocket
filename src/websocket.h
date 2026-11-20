@@ -84,6 +84,12 @@
 #  define be16toh(x) OSSwapBigToHostInt16(x)
 #  define be32toh(x) OSSwapBigToHostInt32(x)
 #  define be64toh(x) OSSwapBigToHostInt64(x)
+#elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+#  define htobe16(x) (x)
+#  define htobe64(x) (x)
+#  define be16toh(x) (x)
+#  define be32toh(x) (x)
+#  define be64toh(x) (x)
 #else
 #  error Platform not supported!
 #endif
@@ -194,7 +200,7 @@ typedef struct WSFrame_ {
   unsigned char mask[4];        /* mask key */
   uint8_t res;                  /* extensions */
   int payload_offset;           /* end of header/start of payload */
-  int payloadlen;               /* payload length (for each frame) */
+  uint64_t payloadlen;          /* payload length (for each frame) */
 
   /* status flags */
   int reading;                  /* still reading frame's header part? */
